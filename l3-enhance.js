@@ -1,6 +1,6 @@
 (function () {
   const BASE = '/Lvl-3-Media/';
-  const MCC_BUY = 'https://matthew.mccluster.org/pay.html';
+  const MCC_BUY = 'https://matthew.mccluster.org/';
 
   function forceVars() {
     var r = document.documentElement;
@@ -89,7 +89,7 @@
       '<a href="' + BASE + '?view=work" data-tab="work" class="l3-tab">' + ICONS.work + '<span>Work</span></a>' +
       '<button type="button" class="l3-plan-btn" id="l3-plan-trigger" aria-label="Plan">' + ICONS.plan + '</button>' +
       '<a href="' + BASE + 'listen.html" data-tab="listen" class="l3-tab">' + ICONS.listen + '<span>Listen</span></a>' +
-      '<a href="' + BASE + '?view=studio" data-tab="studio" class="l3-tab">' + ICONS.studio + '<span>Studio</span></a>';
+      '<a href="' + BASE + 'dashboard.html" data-tab="studio" class="l3-tab">' + ICONS.studio + '<span>Studio</span></a>';
     document.body.appendChild(dock);
     document.body.classList.add('l3-docked');
 
