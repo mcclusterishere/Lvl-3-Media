@@ -59,17 +59,6 @@
       transform: scale(1.06);
       filter: brightness(1) contrast(1.08);
     }
-    input, select, textarea {
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #fff;
-      box-shadow: 0 0 0 1px #fff;
-    }
-    .form-success { display: none; }
-    .form-success.active { display: block; }
-    .form-wrapper.hidden { display: none; }
     ::selection { background: #fff; color: #000; }
   </style>
 </head>
@@ -92,10 +81,10 @@
         <a href="#work" class="hover:text-white transition-colors duration-300">Work</a>
         <a href="#services" class="hover:text-white transition-colors duration-300">Services</a>
         <a href="#about" class="hover:text-white transition-colors duration-300">About</a>
-        <a href="#book" class="hover:text-white transition-colors duration-300">Book</a>
+        <a href="book.html" class="hover:text-white transition-colors duration-300">Book</a>
       </nav>
 
-      <a href="#book" class="text-[13px] font-medium tracking-wide px-5 py-2.5 rounded-full bg-white text-black hover:bg-neutral-200 transition-colors duration-300">
+      <a href="book.html" class="text-[13px] font-medium tracking-wide px-5 py-2.5 rounded-full bg-white text-black hover:bg-neutral-200 transition-colors duration-300">
         Book a Shoot
       </a>
     </div>
@@ -117,7 +106,7 @@
         </p>
 
         <div class="flex flex-col sm:flex-row gap-3">
-          <a href="#book" class="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white text-black text-[14px] font-medium tracking-wide hover:bg-neutral-200 transition-colors duration-300">
+          <a href="book.html" class="inline-flex items-center justify-center px-8 py-4 rounded-full bg-white text-black text-[14px] font-medium tracking-wide hover:bg-neutral-200 transition-colors duration-300">
             Book Your Shoot
           </a>
           <a href="#work" class="inline-flex items-center justify-center px-8 py-4 rounded-full border border-white/20 text-white text-[14px] font-medium tracking-wide hover:border-white/40 hover:bg-white/[0.03] transition-all duration-300">
@@ -276,106 +265,19 @@
   </section>
 
   <section id="book" class="py-24 sm:py-32 border-t border-white/[0.08]">
-    <div class="max-w-xl mx-auto px-5 sm:px-8">
-      <div class="text-center mb-12">
-        <p class="text-[12px] font-medium tracking-[0.2em] uppercase text-mute mb-3">Start a Project</p>
-        <h2 class="font-serif text-3xl sm:text-4xl tracking-tight mb-4">Book your next shoot</h2>
-        <p class="text-soft font-light">Tell us what you’re working on. We’ll reply with availability and a clear quote.</p>
-      </div>
+    <div class="max-w-2xl mx-auto px-5 sm:px-8 text-center">
+      <p class="text-[12px] font-medium tracking-[0.2em] uppercase text-mute mb-3">Start a Project</p>
+      <h2 class="font-serif text-3xl sm:text-4xl tracking-tight mb-5">Let’s talk about your next shoot</h2>
+      <p class="text-soft font-light text-[16px] leading-relaxed mb-10 max-w-md mx-auto">
+        No long forms. Just a short conversation — project type, budget, timeline, and the details that matter. Takes under two minutes.
+      </p>
 
-      <div id="form-success" class="form-success bg-raised border border-line rounded-xl p-10 text-center">
-        <div class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center mx-auto mb-5">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7"/></svg>
-        </div>
-        <h3 class="font-serif text-2xl mb-2">Got it.</h3>
-        <p class="text-soft font-light">We’ll be in touch shortly.</p>
-      </div>
+      <a href="book.html" class="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-white text-black text-[14px] font-medium tracking-wide hover:bg-neutral-200 transition-colors duration-300">
+        Start the conversation
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
 
-      <div id="form-wrapper" class="form-wrapper">
-        <form id="booking-form" action="https://api.web3forms.com/submit" method="POST" class="space-y-5">
-          <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY" />
-          <input type="hidden" name="subject" value="New Level 3 Media Booking Inquiry" />
-          <input type="hidden" name="from_name" value="Level 3 Media Website" />
-          <input type="checkbox" name="botcheck" class="hidden" style="display:none" />
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div>
-              <label for="name" class="block text-[12px] tracking-wide text-mute mb-2">Name *</label>
-              <input type="text" id="name" name="name" required class="w-full px-4 py-3.5 rounded-lg bg-void border border-line text-white placeholder-mute/50 text-[15px]" placeholder="Your name" />
-            </div>
-            <div>
-              <label for="phone" class="block text-[12px] tracking-wide text-mute mb-2">Phone *</label>
-              <input type="tel" id="phone" name="phone" required class="w-full px-4 py-3.5 rounded-lg bg-void border border-line text-white placeholder-mute/50 text-[15px]" placeholder="(555) 000-0000" />
-            </div>
-          </div>
-
-          <div>
-            <label for="email" class="block text-[12px] tracking-wide text-mute mb-2">Email *</label>
-            <input type="email" id="email" name="email" required class="w-full px-4 py-3.5 rounded-lg bg-void border border-line text-white placeholder-mute/50 text-[15px]" placeholder="you@email.com" />
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div>
-              <label for="project_type" class="block text-[12px] tracking-wide text-mute mb-2">Project Type *</label>
-              <select id="project_type" name="project_type" required class="w-full px-4 py-3.5 rounded-lg bg-void border border-line text-white text-[15px] appearance-none">
-                <option value="" disabled selected>Select</option>
-                <option value="Music Video">Music Video</option>
-                <option value="Photography / Stills">Photography / Stills</option>
-                <option value="Video Edit Only">Video Edit Only</option>
-                <option value="Studio Session">Studio Session</option>
-                <option value="Trailer / Promo">Trailer / Promo</option>
-                <option value="Full Production">Full Production</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label for="budget" class="block text-[12px] tracking-wide text-mute mb-2">Budget *</label>
-              <select id="budget" name="budget" required class="w-full px-4 py-3.5 rounded-lg bg-void border border-line text-white text-[15px] appearance-none">
-                <option value="" disabled selected>Select</option>
-                <option value="Under $500">Under $500</option>
-                <option value="$500 – $1,000">$500 – $1,000</option>
-                <option value="$1,000 – $2,500">$1,000 – $2,500</option>
-                <option value="$2,500 – $5,000">$2,500 – $5,000</option>
-                <option value="$5,000+">$5,000+</option>
-                <option value="Flexible / Need Quote">Flexible / Need Quote</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label for="preferred_date" class="block text-[12px] tracking-wide text-mute mb-2">Timeline</label>
-            <input type="text" id="preferred_date" name="preferred_date" class="w-full px-4 py-3.5 rounded-lg bg-void border border-line text-white placeholder-mute/50 text-[15px]" placeholder="Next 2 weeks, specific date, ASAP..." />
-          </div>
-
-          <div>
-            <label for="details" class="block text-[12px] tracking-wide text-mute mb-2">Details *</label>
-            <textarea id="details" name="details" rows="4" required class="w-full px-4 py-3.5 rounded-lg bg-void border border-line text-white placeholder-mute/50 text-[15px] resize-none" placeholder="Artist, song, vibe, locations, references..."></textarea>
-          </div>
-
-          <div>
-            <label for="source" class="block text-[12px] tracking-wide text-mute mb-2">How did you find us?</label>
-            <select id="source" name="source" class="w-full px-4 py-3.5 rounded-lg bg-void border border-line text-white text-[15px] appearance-none">
-              <option value="" disabled selected>Optional</option>
-              <option value="Instagram Ad">Instagram Ad</option>
-              <option value="Instagram Organic">Instagram Organic</option>
-              <option value="YouTube">YouTube</option>
-              <option value="Referral / Friend">Referral / Friend</option>
-              <option value="Google">Google</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-
-          <button type="submit" id="submit-btn" class="w-full py-4 rounded-full bg-white text-black text-[14px] font-medium tracking-wide hover:bg-neutral-200 transition-colors duration-300 flex items-center justify-center gap-2 disabled:opacity-50">
-            <span id="btn-text">Send Inquiry</span>
-            <svg id="btn-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          </button>
-
-          <p class="text-[12px] text-mute text-center">We only use this to reply about your project.</p>
-        </form>
-      </div>
+      <p class="text-[12px] text-mute mt-6">Usually replies within a few hours</p>
     </div>
   </section>
 
@@ -436,7 +338,7 @@
   </footer>
 
   <div id="sticky-cta" class="fixed bottom-0 left-0 right-0 p-4 z-40 md:hidden translate-y-full transition-transform duration-500">
-    <a href="#book" class="flex items-center justify-center w-full py-3.5 rounded-full bg-white text-black text-[14px] font-medium tracking-wide shadow-2xl">
+    <a href="book.html" class="flex items-center justify-center w-full py-3.5 rounded-full bg-white text-black text-[14px] font-medium tracking-wide shadow-2xl">
       Book a Shoot
     </a>
   </div>
@@ -458,43 +360,6 @@
 
     if (hero) observer.observe(hero);
     if (bookSection) observer.observe(bookSection);
-
-    const form = document.getElementById('booking-form');
-    const formWrapper = document.getElementById('form-wrapper');
-    const formSuccess = document.getElementById('form-success');
-    const submitBtn = document.getElementById('submit-btn');
-    const btnText = document.getElementById('btn-text');
-    const btnSpinner = document.getElementById('btn-spinner');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const keyInput = form.querySelector('input[name="access_key"]');
-      if (keyInput.value === 'YOUR_WEB3FORMS_ACCESS_KEY') {
-        alert('Form not connected yet.\n\n1. Go to web3forms.com\n2. Get a free Access Key\n3. Replace YOUR_WEB3FORMS_ACCESS_KEY in the HTML');
-        return;
-      }
-      submitBtn.disabled = true;
-      btnText.textContent = 'Sending...';
-      btnSpinner.classList.remove('hidden');
-      try {
-        const formData = new FormData(form);
-        const response = await fetch(form.action, { method: 'POST', body: formData });
-        const data = await response.json();
-        if (data.success) {
-          formWrapper.classList.add('hidden');
-          formSuccess.classList.add('active');
-          form.reset();
-          formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else throw new Error(data.message || 'Something went wrong');
-      } catch (err) {
-        alert('Could not send right now. Please try again or DM on Instagram.');
-        console.error(err);
-      } finally {
-        submitBtn.disabled = false;
-        btnText.textContent = 'Send Inquiry';
-        btnSpinner.classList.add('hidden');
-      }
-    });
   </script>
 </body>
 </html>
