@@ -1,1 +1,172 @@
-SEE_LOCAL
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#050505" />
+  <title>Studio Dashboard | Level 3 Media</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { void: '#050505', surface: '#0c0c0c', raised: '#121212', line: '#1f1f1f', mute: '#6b6b6b', soft: '#a3a3a3' },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'], serif: ['Instrument Serif', 'Georgia', 'serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #050505; -webkit-font-smoothing: antialiased; }
+    .card { background: #0c0c0c; border: 1px solid #1f1f1f; }
+  </style>
+</head>
+<body class="font-sans text-white antialiased min-h-screen bg-void">
+  <div id="login-screen" class="min-h-screen flex items-center justify-center px-5">
+    <div class="w-full max-w-sm">
+      <div class="flex items-center gap-3 mb-8 justify-center">
+        <div class="w-9 h-9 rounded-full border border-white/70 flex items-center justify-center">
+          <div class="flex flex-col gap-[2.5px]">
+            <span class="block w-3.5 h-[1.5px] bg-white"></span>
+            <span class="block w-3.5 h-[1.5px] bg-white"></span>
+            <span class="block w-3.5 h-[1.5px] bg-white"></span>
+          </div>
+        </div>
+        <span class="text-[13px] font-medium tracking-[0.16em] uppercase">Studio Login</span>
+      </div>
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-[12px] text-mute mb-2 tracking-wide">Password</label>
+          <input id="password" type="password" required class="w-full px-4 py-3.5 rounded-xl bg-raised border border-line text-white text-[15px] focus:outline-none focus:border-white" placeholder="Enter studio password" />
+        </div>
+        <p id="login-error" class="text-[13px] text-red-400 hidden">Wrong password.</p>
+        <button type="submit" class="w-full py-3.5 rounded-full bg-white text-black text-[14px] font-medium tracking-wide hover:bg-neutral-200 transition">Enter dashboard</button>
+      </form>
+      <p class="text-[11px] text-mute text-center mt-6 leading-relaxed">Default password: <span class="text-soft">level3</span><br />Change it in the page source before sharing with the client.</p>
+    </div>
+  </div>
+
+  <div id="dashboard" class="hidden min-h-screen">
+    <header class="border-b border-white/[0.06] sticky top-0 bg-void/90 backdrop-blur-md z-20">
+      <div class="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-7 h-7 rounded-full border border-white/50 flex items-center justify-center">
+            <div class="flex flex-col gap-[2px]">
+              <span class="block w-2.5 h-[1.5px] bg-white"></span>
+              <span class="block w-2.5 h-[1.5px] bg-white"></span>
+              <span class="block w-2.5 h-[1.5px] bg-white"></span>
+            </div>
+          </div>
+          <span class="text-[12px] font-medium tracking-[0.14em] uppercase">Level 3 Dashboard</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="./" class="text-[12px] text-mute hover:text-white transition">Site</a>
+          <button id="logout-btn" class="text-[12px] text-mute hover:text-white transition">Log out</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-5 py-8 sm:py-10 space-y-10">
+      <section>
+        <p class="text-[11px] tracking-[0.18em] uppercase text-mute mb-4">Overview</p>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <div class="card rounded-xl p-5"><p class="text-[11px] text-mute tracking-wide uppercase mb-2">Leads</p><p id="stat-leads" class="font-serif text-3xl tracking-tight">0</p></div>
+          <div class="card rounded-xl p-5"><p class="text-[11px] text-mute tracking-wide uppercase mb-2">New</p><p id="stat-new" class="font-serif text-3xl tracking-tight">0</p></div>
+          <div class="card rounded-xl p-5"><p class="text-[11px] text-mute tracking-wide uppercase mb-2">Ad clicks</p><p class="font-serif text-3xl tracking-tight text-soft">-</p><p class="text-[11px] text-mute mt-2">Connect Meta / Google</p></div>
+          <div class="card rounded-xl p-5"><p class="text-[11px] text-mute tracking-wide uppercase mb-2">Conv. rate</p><p class="font-serif text-3xl tracking-tight text-soft">-</p><p class="text-[11px] text-mute mt-2">Needs ad + analytics link</p></div>
+        </div>
+      </section>
+
+      <section>
+        <p class="text-[11px] tracking-[0.18em] uppercase text-mute mb-4">Ads and performance</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+          <div class="card rounded-xl p-5"><h3 class="text-[14px] font-medium mb-2">Instagram / Meta ads</h3><p class="text-[13px] text-soft leading-relaxed font-light">Hook Meta Ads Manager API or export CSVs here. Track spend, CTR, CPL, and booked shoots from ad traffic.</p></div>
+          <div class="card rounded-xl p-5"><h3 class="text-[14px] font-medium mb-2">Site analytics</h3><p class="text-[13px] text-soft leading-relaxed font-light">Connect GA4 or Plausible for sessions, book page views, and which devices convert best.</p></div>
+          <div class="card rounded-xl p-5"><h3 class="text-[14px] font-medium mb-2">Chat performance</h3><p class="text-[13px] text-soft leading-relaxed font-light">Completion rate of the booking flow, drop-off step, average reply time once backend chat is live.</p></div>
+        </div>
+      </section>
+
+      <section>
+        <div class="flex items-end justify-between gap-4 mb-4">
+          <div><p class="text-[11px] tracking-[0.18em] uppercase text-mute mb-1">Inbox</p><h2 class="font-serif text-2xl tracking-tight">Leads and chat</h2></div>
+          <button id="refresh-leads" class="text-[12px] text-mute hover:text-white transition">Refresh</button>
+        </div>
+        <div id="leads-list" class="space-y-3"></div>
+        <p id="leads-empty" class="text-[14px] text-mute py-10 text-center hidden">No leads yet. When someone finishes the chat booking flow, they show up here on this device.</p>
+      </section>
+
+      <section class="card rounded-xl p-5 sm:p-6">
+        <h3 class="text-[14px] font-medium mb-2">Backend next step</h3>
+        <p class="text-[13px] text-soft leading-relaxed font-light mb-3">Right now leads live in this browser so you can test the flow. For real multi-device login, live two-way chat, ad metrics, and analytics, wire this dashboard to a backend (Supabase, Firebase, or a small Node API). That unlocks true studio replies inside the same chat and cross-device tracking.</p>
+        <p class="text-[12px] text-mute">Email notifications already work once you set the Web3Forms key in book.html.</p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const STUDIO_PASSWORD = 'level3';
+    const AUTH_KEY = 'l3_dash_auth';
+    const loginScreen = document.getElementById('login-screen');
+    const dashboard = document.getElementById('dashboard');
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
+
+    function isAuthed() { return sessionStorage.getItem(AUTH_KEY) === '1'; }
+    function showDash() { loginScreen.classList.add('hidden'); dashboard.classList.remove('hidden'); renderLeads(); }
+    function showLogin() { dashboard.classList.add('hidden'); loginScreen.classList.remove('hidden'); sessionStorage.removeItem(AUTH_KEY); }
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (document.getElementById('password').value === STUDIO_PASSWORD) {
+        sessionStorage.setItem(AUTH_KEY, '1');
+        loginError.classList.add('hidden');
+        showDash();
+      } else {
+        loginError.classList.remove('hidden');
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', showLogin);
+    document.getElementById('refresh-leads').addEventListener('click', renderLeads);
+
+    function renderLeads() {
+      const list = document.getElementById('leads-list');
+      const empty = document.getElementById('leads-empty');
+      let leads = [];
+      try { leads = JSON.parse(localStorage.getItem('l3_leads') || '[]'); } catch (e) {}
+      document.getElementById('stat-leads').textContent = String(leads.length);
+      document.getElementById('stat-new').textContent = String(leads.filter(l => l.status === 'new').length);
+      list.innerHTML = '';
+      if (!leads.length) { empty.classList.remove('hidden'); return; }
+      empty.classList.add('hidden');
+      leads.forEach((lead, idx) => {
+        const el = document.createElement('div');
+        el.className = 'card rounded-xl p-5';
+        const when = lead.created ? new Date(lead.created).toLocaleString() : '';
+        const msgCount = (lead.messages || []).filter(m => m.role === 'user').length;
+        el.innerHTML = `<div class="flex flex-col sm:flex-row sm:items-start justify-between gap-3"><div><div class="flex items-center gap-2 mb-1"><p class="text-[15px] font-medium">${escapeHtml(lead.name || 'Unknown')}</p><span class="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full border border-white/15 text-mute">${escapeHtml(lead.status || 'new')}</span></div><p class="text-[13px] text-soft">${escapeHtml(lead.project_type || '')} · ${escapeHtml(lead.budget || '')} · ${escapeHtml(lead.timeline || '')}</p><p class="text-[12px] text-mute mt-1">${escapeHtml(lead.phone || '')} · ${escapeHtml(lead.email || '')}</p>${lead.details ? `<p class="text-[13px] text-soft mt-3 leading-relaxed">${escapeHtml(lead.details)}</p>` : ''}<p class="text-[11px] text-mute mt-3">${when}${msgCount ? ' · ' + msgCount + ' client message(s)' : ''}</p></div><div class="flex gap-2 flex-shrink-0"><a href="tel:${escapeHtml(lead.phone || '')}" class="px-3 py-2 rounded-full border border-white/15 text-[12px] hover:bg-white/5 transition">Call</a><a href="mailto:${escapeHtml(lead.email || '')}" class="px-3 py-2 rounded-full border border-white/15 text-[12px] hover:bg-white/5 transition">Email</a><button data-idx="${idx}" class="mark-done px-3 py-2 rounded-full border border-white/15 text-[12px] hover:bg-white/5 transition">Done</button></div></div>`;
+        list.appendChild(el);
+      });
+      list.querySelectorAll('.mark-done').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.getAttribute('data-idx'));
+          try {
+            const leads = JSON.parse(localStorage.getItem('l3_leads') || '[]');
+            if (leads[i]) { leads[i].status = 'done'; localStorage.setItem('l3_leads', JSON.stringify(leads)); renderLeads(); }
+          } catch (e) {}
+        });
+      });
+    }
+
+    function escapeHtml(s) {
+      return String(s || '').replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"');
+    }
+
+    if (isAuthed()) showDash();
+  </script>
+</body>
+</html>
