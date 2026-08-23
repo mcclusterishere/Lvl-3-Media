@@ -1,129 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<meta name="robots" content="noindex, nofollow"/>
-<meta name="theme-color" content="#050505"/>
-<title>Studio Dashboard | Level 3 Media</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com"></script>
-<script>tailwind.config={theme:{extend:{colors:{void:'#050505',surface:'#0c0c0c',raised:'#121212',line:'#1f1f1f',mute:'#6b6b6b',soft:'#a3a3a3'},fontFamily:{sans:['Inter','system-ui','sans-serif'],serif:['Instrument Serif','Georgia','serif']}}}}</script>
-<style>body{background:#050505;-webkit-font-smoothing:antialiased}.card{background:#0c0c0c;border:1px solid #1f1f1f}.tab-active{color:#fff;border-bottom:2px solid #fff}</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#080808" />
+  <title>Studio · LEVEL 3 MEDIA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
+  <style>
+    :root { color-scheme: dark; --ink:#080808; --panel:#101010; --line:#ffffff1a; --mute:#8b8b8b; --paper:#f4f1ea; }
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100dvh; background:var(--ink); color:var(--paper); font-family:Inter,system-ui,sans-serif; }
+    a { color:inherit; text-decoration:none; }
+    header {
+      display:flex; align-items:center; justify-content:space-between;
+      height:56px; padding:0 16px; border-bottom:1px solid var(--line);
+      background:rgba(8,8,8,.92); position:sticky; top:0; z-index:10;
+    }
+    .brand { letter-spacing:.14em; font-size:11px; font-weight:600; text-transform:uppercase; }
+    main { width:min(720px,100%); margin:0 auto; padding:24px 16px 80px; }
+    h1 { font-family:"Instrument Serif",Georgia,serif; font-weight:400; font-size:clamp(32px,8vw,48px); margin:0 0 8px; letter-spacing:-.02em; }
+    .sub { color:var(--mute); font-size:13px; line-height:1.5; margin:0 0 24px; }
+    .card { border:1px solid var(--line); background:var(--panel); border-radius:18px; padding:18px; margin-bottom:14px; }
+    .card h2 { margin:0 0 10px; font-size:14px; letter-spacing:.04em; text-transform:uppercase; color:#bbb; font-weight:600; }
+    label { display:block; font-size:11px; color:#999; margin:0 0 6px; }
+    input, textarea {
+      width:100%; background:#0c0c0c; border:1px solid var(--line); color:var(--paper);
+      border-radius:12px; padding:12px 14px; font:inherit; margin-bottom:12px;
+    }
+    button, .btn {
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      min-height:44px; padding:0 16px; border-radius:12px; border:1px solid #fff;
+      background:#fff; color:#0a0a0a; font:inherit; font-weight:600; font-size:13px; cursor:pointer;
+    }
+    button.ghost, .btn.ghost { background:transparent; color:#fff; border-color:var(--line); }
+    button:disabled { opacity:.4; cursor:not-allowed; }
+    .stack { display:flex; flex-wrap:wrap; gap:8px; }
+    .muted { color:var(--mute); font-size:12px; line-height:1.45; }
+    .pill {
+      display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px;
+      border:1px solid var(--line); font-size:11px; color:#ccc;
+    }
+    .pill.on { border-color:#fff; color:#fff; }
+    .track {
+      display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center;
+      padding:12px 0; border-bottom:1px solid var(--line);
+    }
+    .track:last-child { border-bottom:0; }
+    .track strong { display:block; font-size:14px; }
+    .track small { color:var(--mute); }
+    .err { color:#ff8a8a; font-size:12px; margin:0 0 10px; }
+    .ok { color:#b8f0c2; font-size:12px; margin:0 0 10px; }
+    .hidden { display:none !important; }
+    .powered { margin-top:28px; font-size:12px; color:#777; }
+    .powered a { color:#ccc; border-bottom:1px solid #333; }
+  </style>
 </head>
-<body class="font-sans text-white antialiased min-h-screen bg-void">
-<div id="login-screen" class="min-h-screen flex items-center justify-center px-5">
-<div class="w-full max-w-sm">
-<div class="flex items-center gap-3 mb-8 justify-center">
-<div class="w-9 h-9 rounded-full border border-white/70 flex items-center justify-center"><div class="flex flex-col gap-[2.5px]"><span class="block w-3.5 h-[1.5px] bg-white"></span><span class="block w-3.5 h-[1.5px] bg-white"></span><span class="block w-3.5 h-[1.5px] bg-white"></span></div></div>
-<span class="text-[13px] font-medium tracking-[0.16em] uppercase">Studio Login</span>
-</div>
-<form id="login-form" class="space-y-4">
-<div><label class="block text-[12px] text-mute mb-2 tracking-wide">Password</label>
-<input id="password" type="password" required class="w-full px-4 py-3.5 rounded-xl bg-raised border border-line text-white text-[15px] focus:outline-none focus:border-white" placeholder="Enter studio password"/></div>
-<p id="login-error" class="text-[13px] text-red-400 hidden">Wrong password.</p>
-<button type="submit" class="w-full py-3.5 rounded-full bg-white text-black text-[14px] font-medium">Enter dashboard</button>
-</form>
-<p class="text-[11px] text-mute text-center mt-6">Default password: <span class="text-soft">level3</span></p>
-</div></div>
+<body>
+  <header>
+    <a class="brand" href="./">Level 3 Media · Studio</a>
+    <a class="ghost btn" href="https://matthew.mccluster.org/" rel="noopener" style="min-height:36px;font-size:11px">McCluster</a>
+  </header>
+  <main>
+    <h1>Studio desk</h1>
+    <p class="sub">One account on the McCluster platform. Music library and provider profile share the same backend as matthew.mccluster.org.</p>
 
-<div id="dashboard" class="hidden min-h-screen">
-<header class="border-b border-white/[0.06] sticky top-0 bg-void/90 backdrop-blur-md z-20">
-<div class="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
-<span class="text-[12px] font-medium tracking-[0.14em] uppercase">Level 3 Dashboard</span>
-<div class="flex items-center gap-4">
-<a href="./" class="text-[12px] text-mute hover:text-white">Site</a>
-<a href="book.html" class="text-[12px] text-mute hover:text-white">Book flow</a>
-<button id="logout-btn" class="text-[12px] text-mute hover:text-white">Log out</button>
-</div></div></header>
+    <section class="card" id="authCard">
+      <h2>Account</h2>
+      <p class="muted" id="authStatus">Sign in with your McCluster account (or create one). Same auth as the main site.</p>
+      <p class="err hidden" id="authErr"></p>
+      <p class="ok hidden" id="authOk"></p>
+      <div id="authForm">
+        <label>Email</label>
+        <input id="email" type="email" autocomplete="email" placeholder="you@studio.com" />
+        <label>Password</label>
+        <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" />
+        <div class="stack">
+          <button type="button" id="btnSignIn">Sign in</button>
+          <button type="button" class="ghost" id="btnSignUp">Create account</button>
+        </div>
+      </div>
+      <div id="authOut" class="hidden">
+        <p class="muted" id="who"></p>
+        <div class="stack">
+          <button type="button" class="ghost" id="btnSignOut">Sign out</button>
+          <span class="pill" id="providerPill">Provider not claimed</span>
+        </div>
+      </div>
+    </section>
 
-<main class="max-w-6xl mx-auto px-5 py-8 space-y-8">
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-<div class="card rounded-xl p-5"><p class="text-[11px] text-mute uppercase mb-2">Leads</p><p id="stat-leads" class="font-serif text-3xl">0</p></div>
-<div class="card rounded-xl p-5"><p class="text-[11px] text-mute uppercase mb-2">Bookings</p><p id="stat-bookings" class="font-serif text-3xl">0</p></div>
-<div class="card rounded-xl p-5"><p class="text-[11px] text-mute uppercase mb-2">Accounts</p><p id="stat-users" class="font-serif text-3xl">0</p></div>
-<div class="card rounded-xl p-5"><p class="text-[11px] text-mute uppercase mb-2">Open chats</p><p id="stat-chats" class="font-serif text-3xl">0</p></div>
-</div>
+    <section class="card hidden" id="providerCard">
+      <h2>Provider profile</h2>
+      <p class="muted">Claim the Level 3 slot on the McCluster <code>providers</code> table (schema already supports Stripe Connect fields server-side).</p>
+      <label>Display name</label>
+      <input id="provName" value="Level 3 Media" />
+      <label>Craft</label>
+      <input id="provCraft" value="music video · photography · production" />
+      <div class="stack">
+        <button type="button" id="btnClaim">Claim / update provider</button>
+      </div>
+      <p class="muted" style="margin-top:12px">Public checkout on matthew.mccluster.org is currently single-seller. Your provider row still holds <code>stripe_acct</code> for when Connect onboarding is re-armed. Until then bookings can settle through the house ledger.</p>
+    </section>
 
-<div class="flex gap-6 border-b border-white/[0.06] text-[13px] text-mute overflow-x-auto">
-<button data-tab="leads" class="tab tab-active pb-3 whitespace-nowrap">Leads</button>
-<button data-tab="bookings" class="tab pb-3 whitespace-nowrap">Calendar bookings</button>
-<button data-tab="chats" class="tab pb-3 whitespace-nowrap">Client chat</button>
-<button data-tab="settings" class="tab pb-3 whitespace-nowrap">Calendar connect</button>
-<button data-tab="ads" class="tab pb-3 whitespace-nowrap">Ads / performance</button>
-</div>
+    <section class="card hidden" id="musicCard">
+      <h2>Music engine</h2>
+      <p class="muted">Upload to the shared <code>cuts</code> bucket and <code>creator_tracks</code> table. Public tracks show on Listen here and can be read from the main site.</p>
+      <label>Title</label>
+      <input id="trTitle" placeholder="Track title" />
+      <label>Artist credit</label>
+      <input id="trArtist" placeholder="Artist name" value="Level 3 Media" />
+      <label>Audio file (mp3, wav, m4a)</label>
+      <input id="trFile" type="file" accept="audio/*,.mp3,.wav,.m4a" />
+      <div class="stack">
+        <button type="button" id="btnUpload">Upload track</button>
+      </div>
+      <p class="err hidden" id="upErr"></p>
+      <p class="ok hidden" id="upOk"></p>
+      <div id="trackList" style="margin-top:16px"></div>
+    </section>
 
-<section id="panel-leads" class="space-y-3"></section>
-<section id="panel-bookings" class="space-y-3 hidden"></section>
-<section id="panel-chats" class="space-y-3 hidden"></section>
+    <section class="card">
+      <h2>Shortcuts</h2>
+      <div class="stack">
+        <a class="btn ghost" href="./book.html">Chat booking</a>
+        <a class="btn ghost" href="./listen.html">Listen page</a>
+        <a class="btn ghost" href="https://matthew.mccluster.org/album.html" rel="noopener">Main engine</a>
+      </div>
+    </section>
 
-<section id="panel-settings" class="hidden space-y-4">
-<div class="card rounded-xl p-5 sm:p-6 space-y-4">
-<div>
-<h3 class="text-[15px] font-medium mb-1">Google Calendar</h3>
-<p class="text-[13px] text-soft font-light leading-relaxed">Connect the studio Google account booking link. Clients see an Open Google Calendar booking button when they pick a time. Use Google Appointment schedules or a public booking page from Google Calendar.</p>
-</div>
-<div>
-<label class="block text-[12px] text-mute mb-2">Google booking link</label>
-<input id="gc-booking-url" type="url" placeholder="https://calendar.google.com/calendar/appointments/..." class="w-full px-4 py-3 rounded-xl bg-raised border border-line text-[14px] text-white placeholder-mute"/>
-</div>
-<div>
-<label class="block text-[12px] text-mute mb-2">Optional embed URL</label>
-<input id="gc-embed-url" type="url" placeholder="https://calendar.google.com/calendar/embed?src=..." class="w-full px-4 py-3 rounded-xl bg-raised border border-line text-[14px] text-white placeholder-mute"/>
-</div>
-<button type="button" id="save-gc" class="px-6 py-3 rounded-full bg-white text-black text-[13px] font-medium">Save calendar connection</button>
-<p id="gc-saved" class="text-[12px] text-mute hidden">Saved. Clients on this browser will see the Google booking option.</p>
-<div id="gc-preview" class="hidden mt-4 rounded-xl overflow-hidden border border-line"></div>
-<div class="text-[12px] text-mute space-y-2 pt-2 border-t border-white/[0.06]">
-<p class="text-soft font-medium">How to get the link</p>
-<p>1. Open Google Calendar on the studio account.</p>
-<p>2. Create an Appointment schedule under Booking pages, or use a public calendar share link.</p>
-<p>3. Paste that URL above and save.</p>
-<p>For full two way sync on every device, store this in Supabase or Firebase next.</p>
-</div>
-</div>
-</section>
+    <p class="powered">Built and powered by <a href="https://matthew.mccluster.org/" rel="noopener">McCluster</a>. Creator social (all media types) is the next layer on the main site; music is the first vertical.</p>
+  </main>
 
-<section id="panel-ads" class="hidden">
-<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-<div class="card rounded-xl p-5"><h3 class="text-[14px] font-medium mb-2">Meta / Instagram ads</h3><p class="text-[13px] text-soft font-light leading-relaxed">Connect Ads Manager for spend, CTR, CPL, and booked shoots from ad traffic.</p></div>
-<div class="card rounded-xl p-5"><h3 class="text-[14px] font-medium mb-2">Site analytics</h3><p class="text-[13px] text-soft font-light leading-relaxed">Hook GA4 or Plausible for sessions, book page views, and device mix.</p></div>
-<div class="card rounded-xl p-5"><h3 class="text-[14px] font-medium mb-2">Funnel</h3><p class="text-[13px] text-soft font-light leading-relaxed">Quote complete, account created, calendar booked, live chat started.</p></div>
-</div>
-</section>
-</main>
-</div>
+  <script>
+    (function () {
+      var URL_ = "https://zmnhbrjyhxzhkxmhkexs.supabase.co";
+      var KEY = "sb_publishable_kr5NujBZ1n518IUMDoa2dQ_tqQAJef4";
+      var NS = "mccdb_";
+      var PROVIDER_SLUG = "level-3-media";
 
-<script>
-const STUDIO_PASSWORD='level3';
-const AUTH_KEY='l3_dash_auth';
-const loginScreen=document.getElementById('login-screen');
-const dashboard=document.getElementById('dashboard');
-function load(key){try{return JSON.parse(localStorage.getItem(key)||'[]')}catch(e){return[]}}
-function esc(s){return String(s||'').replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"')}
-function isAuthed(){return sessionStorage.getItem(AUTH_KEY)==='1'}
-function showDash(){loginScreen.classList.add('hidden');dashboard.classList.remove('hidden');renderAll();fillSettingsForm()}
-function showLogin(){dashboard.classList.add('hidden');loginScreen.classList.remove('hidden');sessionStorage.removeItem(AUTH_KEY)}
-document.getElementById('login-form').onsubmit=(e)=>{e.preventDefault();if(document.getElementById('password').value===STUDIO_PASSWORD){sessionStorage.setItem(AUTH_KEY,'1');document.getElementById('login-error').classList.add('hidden');showDash()}else{document.getElementById('login-error').classList.remove('hidden')}};
-document.getElementById('logout-btn').onclick=showLogin;
-document.querySelectorAll('.tab').forEach(tab=>{tab.onclick=()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('tab-active'));tab.classList.add('tab-active');['leads','bookings','chats','settings','ads'].forEach(id=>{document.getElementById('panel-'+id).classList.toggle('hidden',tab.dataset.tab!==id)});if(tab.dataset.tab==='settings')fillSettingsForm()}});
-function loadSettings(){try{return JSON.parse(localStorage.getItem('l3_settings')||'{}')}catch(e){return{}}}
-function fillSettingsForm(){const s=loadSettings();const b=document.getElementById('gc-booking-url');const e=document.getElementById('gc-embed-url');if(b)b.value=s.googleBookingUrl||'';if(e)e.value=s.googleEmbedUrl||'';const prev=document.getElementById('gc-preview');if(prev&&s.googleEmbedUrl){prev.classList.remove('hidden');prev.innerHTML='<iframe src="'+s.googleEmbedUrl.replace(/"/g,'')+'" class="w-full h-80 border-0" loading="lazy"></iframe>'}else if(prev){prev.classList.add('hidden');prev.innerHTML=''}}
-document.getElementById('save-gc').onclick=()=>{const settings={googleBookingUrl:document.getElementById('gc-booking-url').value.trim(),googleEmbedUrl:document.getElementById('gc-embed-url').value.trim()};localStorage.setItem('l3_settings',JSON.stringify(settings));document.getElementById('gc-saved').classList.remove('hidden');fillSettingsForm()};
-function renderAll(){
-const leads=load('l3_leads');const bookings=load('l3_bookings');const users=load('l3_users');const threads=load('l3_chat_threads');
-document.getElementById('stat-leads').textContent=leads.length;
-document.getElementById('stat-bookings').textContent=bookings.length;
-document.getElementById('stat-users').textContent=users.length;
-document.getElementById('stat-chats').textContent=threads.length;
-const leadPanel=document.getElementById('panel-leads');leadPanel.innerHTML='';
-if(!leads.length){leadPanel.innerHTML='<p class="text-[14px] text-mute py-8 text-center">No leads yet. Finish a quote on the book page.</p>'}else{leads.forEach((lead,idx)=>{const el=document.createElement('div');el.className='card rounded-xl p-5';const when=lead.created?new Date(lead.created).toLocaleString():'';const bookingLine=lead.booking?`<p class="text-[12px] text-white mt-2">Requested: ${esc(lead.booking.dateLabel)} at ${esc(lead.booking.time)}</p>`:'';el.innerHTML=`<div class="flex flex-col sm:flex-row sm:justify-between gap-3"><div><p class="text-[15px] font-medium">${esc(lead.name)} <span class="text-[10px] uppercase text-mute border border-white/15 px-2 py-0.5 rounded-full ml-1">${esc(lead.status)}</span></p><p class="text-[13px] text-soft mt-1">${esc(lead.project_type)}, ${esc(lead.budget)}, ${esc(lead.timeline)}</p><p class="text-[12px] text-mute mt-1">${esc(lead.phone)}, ${esc(lead.email)}</p>${lead.details?`<p class="text-[13px] text-soft mt-3">${esc(lead.details)}</p>`:''}${bookingLine}<p class="text-[11px] text-mute mt-3">${when}${lead.userId?' · has account':''}</p></div><div class="flex gap-2 flex-shrink-0"><a href="tel:${esc(lead.phone)}" class="px-3 py-2 rounded-full border border-white/15 text-[12px]">Call</a><a href="mailto:${esc(lead.email)}" class="px-3 py-2 rounded-full border border-white/15 text-[12px]">Email</a><button data-idx="${idx}" class="mark-done px-3 py-2 rounded-full border border-white/15 text-[12px]">Done</button></div></div>`;leadPanel.appendChild(el)});leadPanel.querySelectorAll('.mark-done').forEach(btn=>{btn.onclick=()=>{const leads=load('l3_leads');const i=Number(btn.dataset.idx);if(leads[i]){leads[i].status='done';localStorage.setItem('l3_leads',JSON.stringify(leads));renderAll()}}})}
-const bookPanel=document.getElementById('panel-bookings');bookPanel.innerHTML='';
-if(!bookings.length){bookPanel.innerHTML='<p class="text-[14px] text-mute py-8 text-center">No calendar requests yet.</p>'}else{bookings.forEach((b,idx)=>{const el=document.createElement('div');el.className='card rounded-xl p-5';el.innerHTML=`<div class="flex flex-col sm:flex-row sm:justify-between gap-3"><div><p class="text-[15px] font-medium">${esc(b.dateLabel)}, ${esc(b.time)}</p><p class="text-[13px] text-soft mt-1">${esc(b.name)}, ${esc(b.project)}</p><p class="text-[12px] text-mute mt-1">${esc(b.phone)}, ${esc(b.email)}</p><p class="text-[11px] text-mute mt-2">Status: ${esc(b.status)}</p></div><div class="flex gap-2"><button data-idx="${idx}" data-st="confirmed" class="bk-st px-3 py-2 rounded-full border border-white/15 text-[12px]">Confirm</button><button data-idx="${idx}" data-st="declined" class="bk-st px-3 py-2 rounded-full border border-white/15 text-[12px]">Decline</button></div></div>`;bookPanel.appendChild(el)});bookPanel.querySelectorAll('.bk-st').forEach(btn=>{btn.onclick=()=>{const bookings=load('l3_bookings');const i=Number(btn.dataset.idx);if(bookings[i]){bookings[i].status=btn.dataset.st;localStorage.setItem('l3_bookings',JSON.stringify(bookings));renderAll()}}})}
-const chatPanel=document.getElementById('panel-chats');chatPanel.innerHTML='';
-if(!threads.length){chatPanel.innerHTML='<p class="text-[14px] text-mute py-8 text-center">No client account chats yet.</p>'}else{threads.forEach((t,tIdx)=>{const el=document.createElement('div');el.className='card rounded-xl p-5 space-y-3';const msgs=(t.messages||[]).slice(-8).map(m=>`<p class="text-[13px] ${m.role==='user'?'text-white':'text-soft'}"><span class="text-mute text-[11px]">${m.role==='user'?'Client':'Studio'}:</span> ${esc(m.text||m.html||'')}</p>`).join('');el.innerHTML=`<div class="flex justify-between gap-2"><div><p class="text-[15px] font-medium">${esc(t.userName)}</p><p class="text-[12px] text-mute">${esc(t.userEmail)}, ${esc(t.project||'')}</p></div><p class="text-[11px] text-mute">${t.updated?new Date(t.updated).toLocaleString():''}</p></div><div class="space-y-1 border-t border-white/[0.06] pt-3">${msgs||'<p class="text-mute text-[13px]">No messages</p>'}</div><form class="reply-form flex gap-2" data-idx="${tIdx}"><input type="text" placeholder="Reply as studio..." class="flex-1 px-3 py-2 rounded-full bg-raised border border-line text-[13px] text-white placeholder-mute"/><button type="submit" class="px-4 py-2 rounded-full bg-white text-black text-[12px] font-medium">Send</button></form>`;chatPanel.appendChild(el)});chatPanel.querySelectorAll('.reply-form').forEach(form=>{form.onsubmit=(e)=>{e.preventDefault();const input=form.querySelector('input');const val=input.value.trim();if(!val)return;const threads=load('l3_chat_threads');const i=Number(form.dataset.idx);if(threads[i]){threads[i].messages=threads[i].messages||[];threads[i].messages.push({role:'studio',text:val,at:Date.now()});threads[i].updated=new Date().toISOString();localStorage.setItem('l3_chat_threads',JSON.stringify(threads));input.value='';renderAll()}}})}
-}
-if(isAuthed())showDash();
-</script>
+      function jget(k, fb) { try { var v = JSON.parse(localStorage.getItem(NS + k)); return v == null ? fb : v; } catch (e) { return fb; } }
+      function jset(k, v) { try { localStorage.setItem(NS + k, JSON.stringify(v)); } catch (e) {} }
+      function jdel(k) { try { localStorage.removeItem(NS + k); } catch (e) {} }
+      function session() { return jget("session", null); }
+      function saveSession(s) { jset("session", s); }
+      function clearSession() { jdel("session"); }
+
+      function authHeaders() {
+        var s = session();
+        var h = { apikey: KEY, "Content-Type": "application/json" };
+        if (s && s.access_token) h.Authorization = "Bearer " + s.access_token;
+        else h.Authorization = "Bearer " + KEY;
+        return h;
+      }
+
+      function api(path, opts) {
+        opts = opts || {};
+        return fetch(URL_ + path, {
+          method: opts.method || "GET",
+          headers: Object.assign(authHeaders(), opts.headers || {}),
+          body: opts.body ? JSON.stringify(opts.body) : undefined
+        }).then(function (r) {
+          return r.text().then(function (t) {
+            var data = null;
+            try { data = t ? JSON.parse(t) : null; } catch (e) { data = t; }
+            if (!r.ok) {
+              var err = new Error((data && (data.msg || data.message || data.error_description)) || r.statusText);
+              err.status = r.status; err.data = data; throw err;
+            }
+            return data;
+          });
+        });
+      }
+
+      function show(el, on) { el.classList.toggle("hidden", !on); }
+
+      function refreshUI() {
+        var s = session();
+        show(document.getElementById("authForm"), !s);
+        show(document.getElementById("authOut"), !!s);
+        show(document.getElementById("providerCard"), !!s);
+        show(document.getElementById("musicCard"), !!s);
+        document.getElementById("authErr").classList.add("hidden");
+        document.getElementById("authOk").classList.add("hidden");
+        if (s) {
+          document.getElementById("who").textContent = (s.user && (s.user.email || s.user.id)) || "Signed in";
+          loadProvider();
+          loadTracks();
+        }
+      }
+
+      function signIn() {
+        var email = document.getElementById("email").value.trim();
+        var password = document.getElementById("password").value;
+        api("/auth/v1/token?grant_type=password", { method: "POST", body: { email: email, password: password } })
+          .then(function (data) { saveSession(data); refreshUI(); })
+          .catch(function (e) {
+            var box = document.getElementById("authErr");
+            box.textContent = e.message || "Sign in failed";
+            box.classList.remove("hidden");
+          });
+      }
+
+      function signUp() {
+        var email = document.getElementById("email").value.trim();
+        var password = document.getElementById("password").value;
+        api("/auth/v1/signup", { method: "POST", body: { email: email, password: password } })
+          .then(function (data) {
+            if (data.access_token) saveSession(data);
+            else if (data.user && !data.access_token) {
+              var ok = document.getElementById("authOk");
+              ok.textContent = "Account created. Confirm email if required, then sign in.";
+              ok.classList.remove("hidden");
+              return;
+            } else if (data.session) saveSession(data.session);
+            refreshUI();
+          })
+          .catch(function (e) {
+            var box = document.getElementById("authErr");
+            box.textContent = e.message || "Sign up failed";
+            box.classList.remove("hidden");
+          });
+      }
+
+      function signOut() {
+        var s = session();
+        if (s && s.access_token) {
+          fetch(URL_ + "/auth/v1/logout", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.access_token } }).catch(function () {});
+        }
+        clearSession();
+        refreshUI();
+      }
+
+      function loadProvider() {
+        api("/rest/v1/providers?slug=eq." + encodeURIComponent(PROVIDER_SLUG) + "&select=*")
+          .then(function (rows) {
+            var p = Array.isArray(rows) ? rows[0] : null;
+            var pill = document.getElementById("providerPill");
+            if (p) {
+              pill.textContent = "Provider · " + p.slug + (p.charges_enabled ? " · payouts on" : " · payouts pending");
+              pill.classList.add("on");
+              if (p.name) document.getElementById("provName").value = p.name;
+              if (p.craft) document.getElementById("provCraft").value = p.craft;
+            } else {
+              pill.textContent = "Provider not claimed";
+              pill.classList.remove("on");
+            }
+          }).catch(function () {});
+      }
+
+      function claimProvider() {
+        var name = document.getElementById("provName").value.trim() || "Level 3 Media";
+        var craft = document.getElementById("provCraft").value.trim() || "production";
+        api("/rest/v1/providers?on_conflict=slug", {
+          method: "POST",
+          headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+          body: { slug: PROVIDER_SLUG, name: name, craft: craft, rate: 0 }
+        }).then(function () { loadProvider(); })
+          .catch(function (e) { alert(e.message || "Could not claim provider."); });
+      }
+
+      function escapeHtml(s) {
+        return String(s || "").replace(/[&<>"']/g, function (c) {
+          return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[c];
+        });
+      }
+
+      function loadTracks() {
+        var s = session();
+        var uid = s && s.user && s.user.id;
+        var q = uid
+          ? "/rest/v1/creator_tracks?uid=eq." + uid + "&select=id,title,artist,audio_url,public,created_at&order=created_at.desc"
+          : "/rest/v1/creator_tracks?select=id,title,artist,audio_url,public,created_at&order=created_at.desc&limit=20";
+        api(q).then(function (rows) {
+          var box = document.getElementById("trackList");
+          if (!rows || !rows.length) {
+            box.innerHTML = '<p class="muted">No tracks yet. Upload the first cut.</p>';
+            return;
+          }
+          box.innerHTML = rows.map(function (t) {
+            return '<div class="track"><div><strong>' + escapeHtml(t.title) + '</strong><small>' +
+              escapeHtml(t.artist || "") + (t.public ? " · public" : " · private") +
+              '</small></div><a class="btn ghost" style="min-height:36px;font-size:11px" href="' +
+              escapeHtml(t.audio_url) + '" target="_blank" rel="noopener">Open</a></div>';
+          }).join("");
+        }).catch(function (e) {
+          document.getElementById("trackList").innerHTML = '<p class="muted">' + escapeHtml(e.message) + '</p>';
+        });
+      }
+
+      function uploadTrack() {
+        var file = document.getElementById("trFile").files[0];
+        var title = document.getElementById("trTitle").value.trim();
+        var artist = document.getElementById("trArtist").value.trim() || "Level 3 Media";
+        var err = document.getElementById("upErr");
+        var ok = document.getElementById("upOk");
+        err.classList.add("hidden");
+        ok.classList.add("hidden");
+        if (!file || !title) { err.textContent = "Title and audio file are required."; err.classList.remove("hidden"); return; }
+        var s = session();
+        if (!s || !s.access_token || !s.user) { err.textContent = "Sign in first."; err.classList.remove("hidden"); return; }
+        var uid = s.user.id;
+        var safe = file.name.replace(/[^\w.\-]+/g, "_");
+        var path = uid + "/" + Date.now() + "-" + safe;
+        var btn = document.getElementById("btnUpload");
+        btn.disabled = true;
+        fetch(URL_ + "/storage/v1/object/cuts/" + path, {
+          method: "POST",
+          headers: {
+            apikey: KEY,
+            Authorization: "Bearer " + s.access_token,
+            "Content-Type": file.type || "audio/mpeg",
+            "x-upsert": "true"
+          },
+          body: file
+        }).then(function (r) {
+          return r.text().then(function (t) {
+            if (!r.ok) throw new Error(t || r.statusText);
+            return t;
+          });
+        }).then(function () {
+          var publicUrl = URL_ + "/storage/v1/object/public/cuts/" + path;
+          return api("/rest/v1/creator_tracks", {
+            method: "POST",
+            headers: { Prefer: "return=representation" },
+            body: { title: title, artist: artist, audio_url: publicUrl, public: true }
+          });
+        }).then(function () {
+          ok.textContent = "Track live on the shared engine.";
+          ok.classList.remove("hidden");
+          document.getElementById("trTitle").value = "";
+          document.getElementById("trFile").value = "";
+          loadTracks();
+        }).catch(function (e) {
+          err.textContent = e.message || "Upload failed";
+          err.classList.remove("hidden");
+        }).finally(function () { btn.disabled = false; });
+      }
+
+      document.getElementById("btnSignIn").onclick = signIn;
+      document.getElementById("btnSignUp").onclick = signUp;
+      document.getElementById("btnSignOut").onclick = signOut;
+      document.getElementById("btnClaim").onclick = claimProvider;
+      document.getElementById("btnUpload").onclick = uploadTrack;
+      refreshUI();
+    })();
+  </script>
 </body>
 </html>
