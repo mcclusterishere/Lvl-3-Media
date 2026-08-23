@@ -31,5 +31,17 @@
   <body>
     <div id="root"></div>
     <script src="/Lvl-3-Media/l3-enhance.js" defer></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function (regs) {
+          regs.forEach(function (r) { r.update(); });
+        });
+        if (window.caches) {
+          caches.keys().then(function (keys) {
+            keys.filter(function (k) { return k.indexOf('level3-pages-v1') === 0; }).forEach(function (k) { caches.delete(k); });
+          });
+        }
+      }
+    </script>
   </body>
 </html>

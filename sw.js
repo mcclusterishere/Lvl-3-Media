@@ -1,6 +1,6 @@
 const BASE = "/Lvl-3-Media/";
-const CACHE = "level3-pages-v1";
-const APP_SHELL = [BASE, `${BASE}manifest.webmanifest`, `${BASE}favicon.svg`, `${BASE}icon-192.png`, `${BASE}icon-512.png`];
+const CACHE = "level3-pages-v2";
+const APP_SHELL = [BASE, `${BASE}l3-skin.css`, `${BASE}l3-enhance.js`, `${BASE}manifest.webmanifest`, `${BASE}favicon.svg`, `${BASE}icon-192.png`, `${BASE}icon-512.png`];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
