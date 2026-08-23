@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="LEVEL 3 MEDIA — Multi Media Specialist. Music videos, photography, videography & content that hits. Book your next shoot." />
+  <meta name="theme-color" content="#0a0a0a" />
+  <title>LEVEL 3 MEDIA | Multi Media Specialist</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#0a0a0a',
+            surface: '#111111',
+            card: '#161616',
+            accent: '#ff2d55',
+            accent2: '#22d3ee',
+            muted: '#a1a1aa',
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            display: ['Space Grotesk', 'Inter', 'sans-serif'],
+          },
+          animation: {
+            'fade-up': 'fadeUp 0.7s ease-out forwards',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          },
+          keyframes: {
+            fadeUp: {
+              '0%': { opacity: '0', transform: 'translateY(24px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root { color-scheme: dark; }
+    body { background: #0a0a0a; }
+    .hero-gradient {
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(255, 45, 85, 0.18), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 50%, rgba(34, 211, 238, 0.08), transparent),
+        #0a0a0a;
+    }
+    .glass {
+      background: rgba(22, 22, 22, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .text-gradient {
+      background: linear-gradient(135deg, #fff 0%, #ff2d55 50%, #22d3ee 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .card-hover {
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 45, 85, 0.4);
+      box-shadow: 0 20px 40px -12px rgba(255, 45, 85, 0.15);
+    }
+    /* Form focus */
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #ff2d55;
+      box-shadow: 0 0 0 3px rgba(255, 45, 85, 0.2);
+    }
+    /* Hide scrollbar on mobile nav if needed */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    /* Success state */
+    .form-success { display: none; }
+    .form-success.active { display: block; }
+    .form-wrapper.hidden { display: none; }
+  </style>
+</head>
+<body class="font-sans text-white antialiased bg-ink">
+
+  <!-- ========== HEADER ========== -->
+  <header class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/5">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="#home" class="flex items-center gap-3 group">
+        <!-- Logo mark: circle + 3 bars -->
+        <div class="w-9 h-9 rounded-full border-2 border-white flex items-center justify-center group-hover:border-accent transition-colors">
+          <div class="flex flex-col gap-[3px]">
+            <span class="block w-4 h-[2px] bg-white group-hover:bg-accent transition-colors"></span>
+            <span class="block w-4 h-[2px] bg-white group-hover:bg-accent transition-colors"></span>
+            <span class="block w-4 h-[2px] bg-white group-hover:bg-accent transition-colors"></span>
+          </div>
+        </div>
+        <span class="font-display font-bold text-lg tracking-tight">LEVEL 3 <span class="text-accent">MEDIA</span></span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-muted">
+        <a href="#work" class="hover:text-white transition">Work</a>
+        <a href="#services" class="hover:text-white transition">Services</a>
+        <a href="#about" class="hover:text-white transition">About</a>
+        <a href="#book" class="hover:text-white transition">Book</a>
+      </nav>
+
+      <a href="#book" class="inline-flex items-center justify-center px-4 py-2 rounded-full bg-accent text-white text-sm font-semibold hover:bg-accent/90 transition shadow-lg shadow-accent/25">
+        Book a Shoot
+      </a>
+    </div>
+  </header>
+
+  <!-- ========== HERO ========== -->
+  <section id="home" class="hero-gradient min-h-[100svh] flex flex-col justify-center pt-16 pb-20 relative overflow-hidden">
+    <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCI+CjxyZWN0IHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgZmlsbD0ibm9uZSIvPgo8cGF0aCBkPSJNIDAgMCBMIDYwIDYwIE0gNjAgMCBMIDAgNjAiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjAzKSIgc3Ryb2tlLXdpZHRoPSIxIi8+Cjwvc3ZnPg==')] opacity-40"></div>
+
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 w-full">
+      <div class="max-w-3xl">
+        <p class="inline-flex items-center gap-2 text-sm font-medium text-accent2 mb-6 tracking-wide uppercase">
+          <span class="w-2 h-2 rounded-full bg-accent2 animate-pulse-slow"></span>
+          Multi Media Specialist · mi bawn n grow
+        </p>
+
+        <h1 class="font-display font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight mb-6">
+          Content that<br />
+          <span class="text-gradient">hits different.</span>
+        </h1>
+
+        <p class="text-lg sm:text-xl text-muted max-w-xl mb-10 leading-relaxed">
+          Music videos, photography, and high-end visuals for artists who move culture. From concept to final cut — we make it look expensive.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="#book" class="inline-flex items-center justify-center px-8 py-4 rounded-full bg-accent text-white font-semibold text-base hover:bg-accent/90 transition shadow-xl shadow-accent/30">
+            Book Your Shoot
+            <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          </a>
+          <a href="#work" class="inline-flex items-center justify-center px-8 py-4 rounded-full border border-white/20 text-white font-semibold text-base hover:bg-white/5 transition">
+            See the Work
+          </a>
+        </div>
+      </div>
+
+      <!-- Stats strip -->
+      <div class="mt-16 sm:mt-20 grid grid-cols-3 gap-6 max-w-lg">
+        <div>
+          <p class="font-display font-bold text-2xl sm:text-3xl">200+</p>
+          <p class="text-sm text-muted mt-1">Videos Shot</p>
+        </div>
+        <div>
+          <p class="font-display font-bold text-2xl sm:text-3xl">15+</p>
+          <p class="text-sm text-muted mt-1">Years Experience</p>
+        </div>
+        <div>
+          <p class="font-display font-bold text-2xl sm:text-3xl">4.7k</p>
+          <p class="text-sm text-muted mt-1">IG Followers</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== WORK / PORTFOLIO ========== -->
+  <section id="work" class="py-20 sm:py-28 border-t border-white/5">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+        <div>
+          <p class="text-accent font-medium text-sm uppercase tracking-wider mb-2">Selected Work</p>
+          <h2 class="font-display font-bold text-3xl sm:text-4xl">Recent Projects</h2>
+        </div>
+        <a href="https://www.instagram.com/level3mediallc/" target="_blank" rel="noopener" class="text-sm text-muted hover:text-white transition flex items-center gap-1">
+          View all on Instagram
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+      </div>
+
+      <!-- Portfolio grid - mobile first 1 col → 2 → 3 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+        <!-- Card 1 -->
+        <a href="https://www.instagram.com/level3mediallc/" target="_blank" rel="noopener" class="group relative aspect-[4/5] rounded-2xl overflow-hidden bg-card border border-white/5 card-hover">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-accent/20 via-transparent to-transparent opacity-60"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-5 z-20">
+            <p class="text-xs font-medium text-accent2 uppercase tracking-wider mb-1">Music Video</p>
+            <h3 class="font-display font-bold text-xl">BACK OUTSIDE</h3>
+          </div>
+          <div class="absolute top-4 right-4 z-20 opacity-0 group-hover:opacity-100 transition">
+            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/10 backdrop-blur">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </span>
+          </div>
+        </a>
+
+        <!-- Card 2 -->
+        <a href="https://www.instagram.com/level3mediallc/" target="_blank" rel="noopener" class="group relative aspect-[4/5] rounded-2xl overflow-hidden bg-card border border-white/5 card-hover">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-500/30 via-transparent to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-5 z-20">
+            <p class="text-xs font-medium text-accent2 uppercase tracking-wider mb-1">Artist Visual</p>
+            <h3 class="font-display font-bold text-xl">Heart Hands</h3>
+          </div>
+        </a>
+
+        <!-- Card 3 -->
+        <a href="https://www.instagram.com/level3mediallc/" target="_blank" rel="noopener" class="group relative aspect-[4/5] rounded-2xl overflow-hidden bg-card border border-white/5 card-hover">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-cyan-400/20 via-transparent to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-5 z-20">
+            <p class="text-xs font-medium text-accent2 uppercase tracking-wider mb-1">Night Shoot</p>
+            <h3 class="font-display font-bold text-xl">BOXCAR</h3>
+          </div>
+        </a>
+
+        <!-- Card 4 -->
+        <a href="https://www.instagram.com/level3mediallc/" target="_blank" rel="noopener" class="group relative aspect-[4/5] rounded-2xl overflow-hidden bg-card border border-white/5 card-hover sm:col-span-1">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-5 z-20">
+            <p class="text-xs font-medium text-accent2 uppercase tracking-wider mb-1">Music Video</p>
+            <h3 class="font-display font-bold text-xl">LUH JADEN — THE KITCH</h3>
+          </div>
+        </a>
+
+        <!-- Card 5 -->
+        <a href="https://www.instagram.com/level3mediallc/" target="_blank" rel="noopener" class="group relative aspect-[4/5] rounded-2xl overflow-hidden bg-card border border-white/5 card-hover">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-10"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-5 z-20">
+            <p class="text-xs font-medium text-accent2 uppercase tracking-wider mb-1">Artist Feature</p>
+            <h3 class="font-display font-bold text-xl">SHAWNICE</h3>
+          </div>
+        </a>
+
+        <!-- Card 6 - CTA -->
+        <a href="#book" class="group relative aspect-[4/5] rounded-2xl overflow-hidden bg-gradient-to-br from-accent/20 to-card border border-accent/30 flex flex-col items-center justify-center p-6 text-center card-hover">
+          <div class="w-14 h-14 rounded-full bg-accent/20 flex items-center justify-center mb-4 group-hover:scale-110 transition">
+            <svg class="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-2">Your project next</h3>
+          <p class="text-sm text-muted">Ready to shoot? Let’s talk budget & dates.</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SERVICES ========== -->
+  <section id="services" class="py-20 sm:py-28 bg-surface border-t border-white/5">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="text-center max-w-2xl mx-auto mb-14">
+        <p class="text-accent font-medium text-sm uppercase tracking-wider mb-2">What We Do</p>
+        <h2 class="font-display font-bold text-3xl sm:text-4xl mb-4">Full-service visuals</h2>
+        <p class="text-muted">From the first concept call to the final delivery. We handle the whole pipeline so you can focus on the performance.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="bg-card border border-white/5 rounded-2xl p-6 sm:p-8 card-hover">
+          <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-2">Music Videos</h3>
+          <p class="text-muted text-sm leading-relaxed">Concept, direction, cinematography, and edit. Cinematic or raw — we match the energy of the record.</p>
+        </div>
+
+        <div class="bg-card border border-white/5 rounded-2xl p-6 sm:p-8 card-hover">
+          <div class="w-12 h-12 rounded-xl bg-accent2/10 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-accent2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-2">Photography</h3>
+          <p class="text-muted text-sm leading-relaxed">Artist portraits, album art, promo stills, and on-set photography that looks intentional.</p>
+        </div>
+
+        <div class="bg-card border border-white/5 rounded-2xl p-6 sm:p-8 card-hover">
+          <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15.536a5 5 0 001.414 1.414m2.828-9.9a9 9 0 0112.728 0"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-2">Sessions & Live</h3>
+          <p class="text-muted text-sm leading-relaxed">Studio sessions, live performances, and behind-the-scenes content that builds the story.</p>
+        </div>
+
+        <div class="bg-card border border-white/5 rounded-2xl p-6 sm:p-8 card-hover">
+          <div class="w-12 h-12 rounded-xl bg-accent2/10 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-accent2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-2">Video Editing</h3>
+          <p class="text-muted text-sm leading-relaxed">Clean cuts, color, effects, and pacing that keep viewers locked in from the first frame.</p>
+        </div>
+
+        <div class="bg-card border border-white/5 rounded-2xl p-6 sm:p-8 card-hover">
+          <div class="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-2">Trailers & Promos</h3>
+          <p class="text-muted text-sm leading-relaxed">Teasers, trailers, and social cuts designed to drive views and engagement.</p>
+        </div>
+
+        <div class="bg-card border border-white/5 rounded-2xl p-6 sm:p-8 card-hover">
+          <div class="w-12 h-12 rounded-xl bg-accent2/10 flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-accent2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-xl mb-2">Full Production</h3>
+          <p class="text-muted text-sm leading-relaxed">Location, lighting, crew coordination — we run the set so the artist can perform.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== BOOKING / LEAD FORM (ADS LANDING TARGET) ========== -->
+  <section id="book" class="py-20 sm:py-28 border-t border-white/5 relative">
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/5 via-transparent to-transparent pointer-events-none"></div>
+
+    <div class="relative max-w-3xl mx-auto px-4 sm:px-6">
+      <div class="text-center mb-10">
+        <p class="text-accent font-medium text-sm uppercase tracking-wider mb-2">Start a Project</p>
+        <h2 class="font-display font-bold text-3xl sm:text-4xl mb-3">Book your next shoot</h2>
+        <p class="text-muted max-w-md mx-auto">Tell us what you’re working on. We’ll get back fast with availability and a clear quote.</p>
+      </div>
+
+      <!-- Success state -->
+      <div id="form-success" class="form-success bg-card border border-accent/30 rounded-2xl p-8 sm:p-10 text-center">
+        <div class="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-5">
+          <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-2xl mb-2">Got it. We’ll be in touch.</h3>
+        <p class="text-muted">Your inquiry just landed. Expect a reply soon with next steps.</p>
+      </div>
+
+      <!-- Form -->
+      <div id="form-wrapper" class="form-wrapper bg-card border border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/40">
+        <!-- 
+          FORM SETUP:
+          1. Go to https://web3forms.com → Get Access Key (free)
+          2. Replace the access_key value below
+          3. Submissions will email straight to the address you used on Web3Forms
+        -->
+        <form id="booking-form" action="https://api.web3forms.com/submit" method="POST" class="space-y-5">
+          <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY" />
+          <input type="hidden" name="subject" value="New Level 3 Media Booking Inquiry" />
+          <input type="hidden" name="from_name" value="Level 3 Media Website" />
+          <input type="checkbox" name="botcheck" class="hidden" style="display:none" />
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label for="name" class="block text-sm font-medium mb-1.5">Full Name *</label>
+              <input type="text" id="name" name="name" required
+                class="w-full px-4 py-3 rounded-xl bg-ink border border-white/10 text-white placeholder-muted/60 focus:border-accent transition"
+                placeholder="Your name" />
+            </div>
+            <div>
+              <label for="phone" class="block text-sm font-medium mb-1.5">Phone *</label>
+              <input type="tel" id="phone" name="phone" required
+                class="w-full px-4 py-3 rounded-xl bg-ink border border-white/10 text-white placeholder-muted/60 focus:border-accent transition"
+                placeholder="(555) 000-0000" />
+            </div>
+          </div>
+
+          <div>
+            <label for="email" class="block text-sm font-medium mb-1.5">Email *</label>
+            <input type="email" id="email" name="email" required
+              class="w-full px-4 py-3 rounded-xl bg-ink border border-white/10 text-white placeholder-muted/60 focus:border-accent transition"
+              placeholder="you@email.com" />
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label for="project_type" class="block text-sm font-medium mb-1.5">Project Type *</label>
+              <select id="project_type" name="project_type" required
+                class="w-full px-4 py-3 rounded-xl bg-ink border border-white/10 text-white focus:border-accent transition appearance-none">
+                <option value="" disabled selected>Select type</option>
+                <option value="Music Video">Music Video</option>
+                <option value="Photography / Stills">Photography / Stills</option>
+                <option value="Video Edit Only">Video Edit Only</option>
+                <option value="Studio Session">Studio Session</option>
+                <option value="Trailer / Promo">Trailer / Promo</option>
+                <option value="Full Production">Full Production</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label for="budget" class="block text-sm font-medium mb-1.5">Budget Range *</label>
+              <select id="budget" name="budget" required
+                class="w-full px-4 py-3 rounded-xl bg-ink border border-white/10 text-white focus:border-accent transition appearance-none">
+                <option value="" disabled selected>Select range</option>
+                <option value="Under $500">Under $500</option>
+                <option value="$500 – $1,000">$500 – $1,000</option>
+                <option value="$1,000 – $2,500">$1,000 – $2,500</option>
+                <option value="$2,500 – $5,000">$2,500 – $5,000</option>
+                <option value="$5,000+">$5,000+</option>
+                <option value="Flexible / Need Quote">Flexible / Need Quote</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="preferred_date" class="block text-sm font-medium mb-1.5">Preferred Date / Timeline</label>
+            <input type="text" id="preferred_date" name="preferred_date"
+              class="w-full px-4 py-3 rounded-xl bg-ink border border-white/10 text-white placeholder-muted/60 focus:border-accent transition"
+              placeholder="e.g. Next 2 weeks, specific date, or ASAP" />
+          </div>
+
+          <div>
+            <label for="details" class="block text-sm font-medium mb-1.5">Project Details *</label>
+            <textarea id="details" name="details" rows="4" required
+              class="w-full px-4 py-3 rounded-xl bg-ink border border-white/10 text-white placeholder-muted/60 focus:border-accent transition resize-none"
+              placeholder="Artist name, song title, vibe, locations, references, anything important..."></textarea>
+          </div>
+
+          <div>
+            <label for="source" class="block text-sm font-medium mb-1.5">How did you find us?</label>
+            <select id="source" name="source"
+              class="w-full px-4 py-3 rounded-xl bg-ink border border-white/10 text-white focus:border-accent transition appearance-none">
+              <option value="" disabled selected>Optional</option>
+              <option value="Instagram Ad">Instagram Ad</option>
+              <option value="Instagram Organic">Instagram Organic</option>
+              <option value="YouTube">YouTube</option>
+              <option value="Referral / Friend">Referral / Friend</option>
+              <option value="Google">Google</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <button type="submit" id="submit-btn"
+            class="w-full py-4 rounded-xl bg-accent text-white font-semibold text-base hover:bg-accent/90 transition shadow-lg shadow-accent/25 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+            <span id="btn-text">Send Inquiry</span>
+            <svg id="btn-spinner" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          </button>
+
+          <p class="text-xs text-muted text-center">We’ll only use this info to reply about your project. No spam.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== ABOUT ========== -->
+  <section id="about" class="py-20 sm:py-28 bg-surface border-t border-white/5">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div>
+          <p class="text-accent font-medium text-sm uppercase tracking-wider mb-2">The Team</p>
+          <h2 class="font-display font-bold text-3xl sm:text-4xl mb-6">mi bawn n grow</h2>
+          <div class="space-y-4 text-muted leading-relaxed">
+            <p>
+              LEVEL 3 MEDIA is powered by Laire Dunkley — also known as TurnMeUpLaire. Born in Kingston, Jamaica, raised between Brooklyn and New Haven, with deep roots in Atlanta’s creative scene.
+            </p>
+            <p>
+              15+ years in music production. 10+ years behind the camera. Over 200 music videos shot. Hundreds of beats. A reputation built on consistency, quality, and real results for artists at every level.
+            </p>
+            <p>
+              Based in the Connecticut area with a studio in West Haven — ready to travel when the project calls for it.
+            </p>
+          </div>
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="https://www.instagram.com/level3mediallc/" target="_blank" rel="noopener"
+              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/15 text-sm font-medium hover:bg-white/5 transition">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+              Instagram
+            </a>
+            <a href="https://www.youtube.com/@level3mediallc" target="_blank" rel="noopener"
+              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-white/15 text-sm font-medium hover:bg-white/5 transition">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+              YouTube
+            </a>
+          </div>
+        </div>
+
+        <div class="relative">
+          <div class="aspect-square rounded-3xl bg-card border border-white/10 overflow-hidden flex items-center justify-center">
+            <div class="text-center p-8">
+              <div class="w-24 h-24 rounded-full border-2 border-white/20 flex items-center justify-center mx-auto mb-6">
+                <div class="flex flex-col gap-1.5">
+                  <span class="block w-10 h-1 bg-white/80"></span>
+                  <span class="block w-10 h-1 bg-white/80"></span>
+                  <span class="block w-10 h-1 bg-white/80"></span>
+                </div>
+              </div>
+              <p class="font-display font-bold text-2xl">LEVEL 3 MEDIA</p>
+              <p class="text-muted text-sm mt-2">Multi Media Specialist</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="border-t border-white/5 py-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-full border border-white/30 flex items-center justify-center">
+            <div class="flex flex-col gap-[2px]">
+              <span class="block w-3.5 h-[1.5px] bg-white"></span>
+              <span class="block w-3.5 h-[1.5px] bg-white"></span>
+              <span class="block w-3.5 h-[1.5px] bg-white"></span>
+            </div>
+          </div>
+          <span class="font-display font-bold">LEVEL 3 MEDIA</span>
+        </div>
+        <p class="text-sm text-muted text-center">© 2026 Level 3 Media LLC · West Haven, CT</p>
+        <div class="flex gap-4">
+          <a href="https://www.instagram.com/level3mediallc/" target="_blank" rel="noopener" class="text-muted hover:text-white transition" aria-label="Instagram">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@level3mediallc" target="_blank" rel="noopener" class="text-muted hover:text-white transition" aria-label="YouTube">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Sticky mobile CTA (shows on scroll past hero) -->
+  <div id="sticky-cta" class="fixed bottom-0 left-0 right-0 p-4 z-40 md:hidden translate-y-full transition-transform duration-300">
+    <a href="#book" class="flex items-center justify-center w-full py-3.5 rounded-full bg-accent text-white font-semibold shadow-xl shadow-accent/40">
+      Book a Shoot
+    </a>
+  </div>
+
+  <script>
+    // Sticky CTA on mobile
+    const stickyCta = document.getElementById('sticky-cta');
+    const hero = document.getElementById('home');
+    const bookSection = document.getElementById('book');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.target === hero) {
+          if (!entry.isIntersecting) {
+            stickyCta.classList.remove('translate-y-full');
+          } else {
+            stickyCta.classList.add('translate-y-full');
+          }
+        }
+        if (entry.target === bookSection) {
+          if (entry.isIntersecting) {
+            stickyCta.classList.add('translate-y-full');
+          }
+        }
+      });
+    }, { threshold: 0.1 });
+
+    if (hero) observer.observe(hero);
+    if (bookSection) observer.observe(bookSection);
+
+    // Form handling
+    const form = document.getElementById('booking-form');
+    const formWrapper = document.getElementById('form-wrapper');
+    const formSuccess = document.getElementById('form-success');
+    const submitBtn = document.getElementById('submit-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnSpinner = document.getElementById('btn-spinner');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Basic check for placeholder key
+      const keyInput = form.querySelector('input[name="access_key"]');
+      if (keyInput.value === 'YOUR_WEB3FORMS_ACCESS_KEY') {
+        alert('Form is not fully connected yet.\n\nQuick setup:\n1. Go to web3forms.com\n2. Get a free Access Key\n3. Replace YOUR_WEB3FORMS_ACCESS_KEY in the HTML\n\nThen submissions will email you instantly.');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      btnText.textContent = 'Sending...';
+      btnSpinner.classList.remove('hidden');
+
+      try {
+        const formData = new FormData(form);
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await response.json();
+
+        if (data.success) {
+          formWrapper.classList.add('hidden');
+          formSuccess.classList.add('active');
+          form.reset();
+          // Optional: scroll to success
+          formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          throw new Error(data.message || 'Something went wrong');
+        }
+      } catch (err) {
+        alert('Could not send right now. Please try again or DM us on Instagram.');
+        console.error(err);
+      } finally {
+        submitBtn.disabled = false;
+        btnText.textContent = 'Send Inquiry';
+        btnSpinner.classList.add('hidden');
+      }
+    });
+  </script>
+</body>
+</html>
