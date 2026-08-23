@@ -1,88 +1,80 @@
 (function () {
   const BASE = '/Lvl-3-Media/';
-  const REDS = ['#ff4938', '#FF4938', '#b82318', '#B82318', 'rgb(255, 73, 56)', 'rgb(255,73,56)'];
+
+  function forceVars() {
+    var r = document.documentElement;
+    r.style.setProperty('--signal', '#ffffff');
+    r.style.setProperty('--signal-dark', '#d0d0d0');
+    r.style.setProperty('--green', '#ffffff');
+    if (document.body) {
+      document.body.style.setProperty('--signal', '#ffffff');
+      document.body.style.setProperty('--signal-dark', '#d0d0d0');
+      document.body.style.setProperty('--green', '#ffffff');
+    }
+  }
 
   function isPlanView() {
-    const q = new URLSearchParams(location.search);
+    var q = new URLSearchParams(location.search);
     return q.get('view') === 'plan' || /plan/i.test(location.hash);
   }
 
-  function paintMonochrome(root) {
-    const walk = (node) => {
-      if (!node || node.nodeType !== 1) return;
-      const st = node.getAttribute && node.getAttribute('style');
-      if (st) {
-        let next = st;
-        REDS.forEach((r) => { next = next.split(r).join('#ffffff'); });
-        if (next !== st) node.setAttribute('style', next);
-      }
-      ['fill', 'stroke'].forEach((attr) => {
-        const v = node.getAttribute && node.getAttribute(attr);
-        if (!v) return;
-        const low = v.toLowerCase();
-        if (low.includes('ff4938') || low.includes('b82318') || low.includes('255, 73, 56') || low.includes('255,73,56')) {
-          node.setAttribute(attr, '#ffffff');
-        }
-      });
+  function paintMonochrome() {
+    forceVars();
+    var root = document.getElementById('root') || document.body;
+    if (!root) return;
+    var nodes = root.querySelectorAll('*');
+    for (var i = 0; i < nodes.length; i++) {
+      var node = nodes[i];
       try {
-        const cs = getComputedStyle(node);
-        const c = cs.color;
-        if (c && c.startsWith('rgb')) {
-          const m = c.match(/\d+/g);
+        var cs = getComputedStyle(node);
+        var c = cs.color;
+        if (c && c.indexOf('rgb') === 0) {
+          var m = c.match(/\d+/g);
           if (m) {
-            const r = +m[0], g = +m[1], b = +m[2];
+            var r = +m[0], g = +m[1], b = +m[2];
             if (r > 200 && g < 120 && b < 100) node.style.color = '#ffffff';
-          }
-        }
-        const bg = cs.backgroundColor;
-        if (bg && bg.startsWith('rgb')) {
-          const m = bg.match(/\d+/g);
-          if (m) {
-            const r = +m[0], g = +m[1], b = +m[2], a = m[3] !== undefined ? +m[3] : 1;
-            if (r > 200 && g < 120 && b < 100 && a > 0.05) {
-              if (a > 0.85) {
-                node.style.backgroundColor = '#ffffff';
-                node.style.color = '#0a0a0a';
-                node.classList.add('l3-mono-fill');
-              } else {
-                node.style.backgroundColor = 'rgba(255,255,255,' + Math.min(a * 1.2, 0.35) + ')';
-              }
+            if (g > 150 && r < 120 && b < 140 && node.classList.contains('live-dot')) {
+              node.style.backgroundColor = '#ffffff';
             }
           }
         }
-        if (node.classList && /rounded-full/.test(node.className || '')) {
-          const bg2 = getComputedStyle(node).backgroundColor;
-          const m2 = bg2 && bg2.match(/\d+/g);
+        var bg = cs.backgroundColor;
+        if (bg && bg.indexOf('rgb') === 0) {
+          var m2 = bg.match(/\d+/g);
           if (m2) {
-            const r = +m2[0], g = +m2[1], b = +m2[2];
-            if (g > 140 && r < 120 && b < 120) {
+            var r2 = +m2[0], g2 = +m2[1], b2 = +m2[2], a2 = m2[3] !== undefined ? +m2[3] : 1;
+            if (r2 > 200 && g2 < 120 && b2 < 100 && a2 > 0.2) {
+              if (a2 > 0.85) {
+                node.style.backgroundColor = '#ffffff';
+                node.style.color = '#0a0a0a';
+              } else {
+                node.style.backgroundColor = 'rgba(255,255,255,' + Math.min(a2, 0.35) + ')';
+              }
+            }
+            if (g2 > 150 && r2 < 120 && b2 < 140 && a2 > 0.5) {
               node.style.backgroundColor = '#ffffff';
-              node.classList.add('l3-status-dot');
             }
           }
         }
       } catch (e) {}
-      for (let i = 0; i < node.children.length; i++) walk(node.children[i]);
-    };
-    walk(root || document.getElementById('root') || document.body);
+    }
   }
 
   function staggerIn() {
-    const root = document.getElementById('root');
+    var root = document.getElementById('root');
     if (!root) return;
-    const kids = root.querySelectorAll('h1, h2, p, section, article');
-    let n = 0;
-    kids.forEach((el) => {
-      if (el.closest('#l3-dock') || el.closest('#l3-choice')) return;
+    var kids = root.querySelectorAll('h1, h2, p');
+    var n = 0;
+    kids.forEach(function (el) {
       if (el.dataset.l3Anim) return;
       el.dataset.l3Anim = '1';
       el.classList.add('l3-animate-in');
-      el.classList.add('l3-animate-in-delay-' + Math.min(4, (n % 5)));
+      el.classList.add('l3-animate-in-delay-' + Math.min(4, n % 5));
       n++;
     });
   }
 
-  const ICONS = {
+  var ICONS = {
     home: '<svg class="l3-ico" viewBox="0 0 24 24"><path d="M4 10.5L12 4l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-9.5z"/><circle cx="12" cy="12.5" r="1.2"/></svg>',
     work: '<svg class="l3-ico" viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="13" width="7" height="7" rx="1.5"/><rect x="14" y="13" width="7" height="7" rx="1.5"/></svg>',
     plan: '<svg class="l3-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 9.5h8M8 12h8M8 14.5h8"/></svg>',
@@ -92,7 +84,7 @@
 
   function mountDock() {
     if (document.getElementById('l3-dock')) return;
-    const dock = document.createElement('div');
+    var dock = document.createElement('div');
     dock.id = 'l3-dock';
     dock.innerHTML =
       '<a href="' + BASE + '" data-tab="home" class="l3-tab">' + ICONS.home + '<span>Home</span></a>' +
@@ -103,8 +95,8 @@
     document.body.appendChild(dock);
     document.body.classList.add('l3-docked');
 
-    const view = new URLSearchParams(location.search).get('view') || 'home';
-    dock.querySelectorAll('.l3-tab').forEach((a) => {
+    var view = new URLSearchParams(location.search).get('view') || 'home';
+    dock.querySelectorAll('.l3-tab').forEach(function (a) {
       if (a.dataset.tab === view) a.classList.add('l3-active');
       if (!location.search && a.dataset.tab === 'home') a.classList.add('l3-active');
     });
@@ -147,20 +139,14 @@
   }
 
   function hideNativeNav() {
-    document.querySelectorAll('nav, footer, div').forEach(function (n) {
-      if (n.id === 'l3-dock' || n.closest('#l3-dock') || n.closest('#l3-choice')) return;
-      var cs = getComputedStyle(n);
-      if (cs.position === 'fixed' && parseInt(cs.bottom, 10) <= 24 && n.offsetHeight < 130 && n.offsetWidth > 200) {
-        if (n.querySelector('button,a') && /home|work|plan|saved|studio/i.test(n.textContent || '')) {
-          n.style.opacity = '0';
-          n.style.pointerEvents = 'none';
-          n.setAttribute('data-l3-hidden-nav', '1');
-        }
-      }
+    document.querySelectorAll('.bottom-nav').forEach(function (n) {
+      n.style.opacity = '0';
+      n.style.pointerEvents = 'none';
     });
   }
 
   function boot() {
+    forceVars();
     paintMonochrome();
     staggerIn();
     mountDock();
@@ -171,7 +157,7 @@
   }
 
   var obs = new MutationObserver(function () {
-    paintMonochrome();
+    forceVars();
     hideNativeNav();
   });
 
@@ -183,6 +169,7 @@
       return function () {
         var r = fn.apply(this, arguments);
         setTimeout(function () {
+          forceVars();
           paintMonochrome();
           hideNativeNav();
           if (isPlanView() && !new URLSearchParams(location.search).get('flow')) openChoice();
