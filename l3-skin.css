@@ -1,15 +1,15 @@
 /* Level 3 Media — monochrome skin + motion over the SPA */
-:root {
-  --l3-red: #ffffff !important;
-  --l3-accent: #f2f2f2;
-  --l3-soft: #a3a3a3;
-  --l3-mute: #6b6b6b;
-  --l3-line: #1f1f1f;
-  --l3-void: #080808;
+:root,
+:host,
+html,
+body {
+  --signal: #ffffff !important;
+  --signal-dark: #d0d0d0 !important;
+  --green: #ffffff !important;
 }
 
-html body {
-  --tw-ring-color: #ffffff40 !important;
+body {
+  background: #080808 !important;
 }
 
 @keyframes l3-rise {
@@ -21,12 +21,8 @@ html body {
   to { opacity: 1; }
 }
 @keyframes l3-glow {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.0), 0 8px 28px rgba(0,0,0,0.45); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0), 0 8px 28px rgba(0,0,0,0.45); }
   50% { box-shadow: 0 0 0 6px rgba(255,255,255,0.06), 0 8px 28px rgba(0,0,0,0.45); }
-}
-@keyframes l3-bar {
-  from { transform: scaleX(0); transform-origin: left; }
-  to { transform: scaleX(1); transform-origin: left; }
 }
 
 .l3-animate-in {
@@ -37,18 +33,6 @@ html body {
 .l3-animate-in-delay-3 { animation-delay: 0.24s; }
 .l3-animate-in-delay-4 { animation-delay: 0.32s; }
 
-.l3-mono-accent { color: #fff !important; background-color: transparent !important; }
-.l3-mono-fill {
-  background-color: #fff !important;
-  color: #0a0a0a !important;
-  border-color: #fff !important;
-}
-.l3-mono-fill svg,
-.l3-mono-fill path {
-  stroke: #0a0a0a !important;
-  fill: none !important;
-}
-
 .l3-status-dot {
   background: #fff !important;
   box-shadow: 0 0 0 4px rgba(255,255,255,0.12) !important;
@@ -57,15 +41,14 @@ html body {
 #l3-dock {
   position: fixed;
   left: 50%;
-  bottom: max(12px, env(safe-area-inset-bottom));
+  bottom: max(10px, env(safe-area-inset-bottom));
   transform: translateX(-50%);
   z-index: 9998;
   display: flex;
   align-items: flex-end;
-  gap: 0;
   padding: 8px 10px 6px;
   border-radius: 28px;
-  background: rgba(12,12,12,0.88);
+  background: rgba(12,12,12,0.92);
   border: 1px solid rgba(255,255,255,0.08);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -73,7 +56,8 @@ html body {
   width: min(420px, calc(100vw - 20px));
   justify-content: space-between;
 }
-#l3-dock a, #l3-dock button.l3-tab {
+#l3-dock a,
+#l3-dock button.l3-tab {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -88,9 +72,8 @@ html body {
   font-family: inherit;
   padding: 6px 2px;
   cursor: pointer;
-  transition: color 0.2s ease, transform 0.2s ease;
 }
-#l3-dock a.l3-active, #l3-dock button.l3-active { color: #fff; }
+#l3-dock a.l3-active { color: #fff; }
 #l3-dock svg { width: 22px; height: 22px; }
 #l3-dock .l3-plan-btn {
   flex: 0 0 auto;
@@ -111,7 +94,7 @@ html body {
 }
 #l3-dock .l3-plan-btn svg { width: 26px; height: 26px; }
 
-body.l3-docked [data-l3-hidden-nav="1"] {
+body.l3-docked .bottom-nav {
   opacity: 0 !important;
   pointer-events: none !important;
 }
@@ -161,11 +144,10 @@ body.l3-docked [data-l3-hidden-nav="1"] {
   margin-bottom: 10px;
   color: #fff;
   cursor: pointer;
-  transition: border-color 0.2s, background 0.2s, transform 0.15s;
   text-decoration: none;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s;
 }
 #l3-choice .opt:active { transform: scale(0.98); }
-#l3-choice .opt:hover { border-color: #555; background: #171717; }
 #l3-choice .opt strong {
   display: block;
   font-size: 15px;
@@ -194,10 +176,20 @@ body.l3-docked [data-l3-hidden-nav="1"] {
   cursor: pointer;
 }
 
-.l3-ico path, .l3-ico circle, .l3-ico rect, .l3-ico line {
+.l3-ico path,
+.l3-ico circle,
+.l3-ico rect,
+.l3-ico line {
   stroke: currentColor;
   fill: none;
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.primary-button,
+.nav-create > span,
+.film-status span,
+.finish-check {
+  box-shadow: 0 10px 30px rgba(255,255,255,0.08) !important;
 }
