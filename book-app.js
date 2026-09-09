@@ -23,7 +23,7 @@ async function askName(){await addStudio(`What is your name?`);showTextInput('Yo
 async function askPhone(){await addStudio(`Best number to reach you?`);showTextInput('Phone number',false,async(val)=>{state.data.phone=val;addUser(val);clearInput();await askEmail()},'tel')}
 async function askEmail(){await addStudio(`Email so we can send details.`);showTextInput('you@email.com',false,async(val)=>{if(!val.includes('@'))return;state.data.email=val;addUser(val);clearInput();await showSummary()},'email')}
 async function showSummary(){const d=state.data;await addStudio(`Here is what I have got:<br><br><span class="text-white">Project:</span> ${escapeHtml(d.project_type)}<br><span class="text-white">Budget:</span> ${escapeHtml(d.budget)}<br><span class="text-white">Timeline:</span> ${escapeHtml(d.timeline)}<br><span class="text-white">Name:</span> ${escapeHtml(d.name)}<br><span class="text-white">Phone:</span> ${escapeHtml(d.phone)}<br><span class="text-white">Email:</span> ${escapeHtml(d.email)}<br><br>Ready to send this over?`);showChips([{label:'Yes, send it',value:'yes'},{label:'Start over',value:'restart'}],async(opt)=>{if(opt.value==='restart'){addUser('Start over');clearInput();chatScroll.innerHTML='';state.data={project_type:'',budget:'',timeline:'',details:'',name:'',phone:'',email:'',source:'Chat Booking Page'};state.messages=[];state.phase='intake';saveSession();await start();return}addUser('Yes, send it');clearInput();await submitQuote()})}
-async function submitQuote(){await addStudio(`Sending now...`);clearInput();pushLead();if(ACCESS_KEY!=='YOUR_WEB3FORMS_ACCESS_KEY'){try{const fd=new FormData();fd.append('access_key',ACCESS_KEY);fd.append('subject',`New Level 3 Media Booking: ${state.data.project_type}`);fd.append('from_name','Level 3 Media Chat');Object.entries(state.data).forEach(([k,v])=>fd.append(k,v));await fetch('https://api.web3forms.com/submit',{method:'POST',body:fd})}catch(e){}}const first=(state.data.name||'there').split(' ')[0];state.phase='post';saveSession();await addStudio(`<strong class="text-white">Got it, ${escapeHtml(first)}.</strong><br><br>Your quote request is in. Next you can:`);showPostQuoteOptions()}
+async function submitQuote(){await addStudio(`Sending now...`);clearInput();pushLead();await fileInquiry();if(ACCESS_KEY!=='YOUR_WEB3FORMS_ACCESS_KEY'){try{const fd=new FormData();fd.append('access_key',ACCESS_KEY);fd.append('subject',`New Level 3 Media Booking: ${state.data.project_type}`);fd.append('from_name','Level 3 Media Chat');Object.entries(state.data).forEach(([k,v])=>fd.append(k,v));await fetch('https://api.web3forms.com/submit',{method:'POST',body:fd})}catch(e){}}const first=(state.data.name||'there').split(' ')[0];state.phase='post';saveSession();await addStudio(`<strong class="text-white">Got it, ${escapeHtml(first)}.</strong><br><br>Your quote request is in. Next you can:`);showPostQuoteOptions()}
 function showPostQuoteOptions(){statusLine.textContent='Quote received';clearInput();const wrap=document.createElement('div');wrap.className='space-y-2 fade-in';wrap.innerHTML=`<button type="button" data-act="account" class="w-full text-left px-4 py-3.5 rounded-2xl border border-white/15 hover:bg-white/5 transition"><p class="text-[14px] font-medium text-white">Create account / log in</p><p class="text-[12px] text-mute mt-0.5">Chat with the studio owner in real time</p></button><button type="button" data-act="calendar" class="w-full text-left px-4 py-3.5 rounded-2xl border border-white/15 hover:bg-white/5 transition"><p class="text-[14px] font-medium text-white">Pick a day and time</p><p class="text-[12px] text-mute mt-0.5">Book a specific slot on the calendar</p></button><button type="button" data-act="later" class="w-full text-left px-4 py-3.5 rounded-2xl border border-white/10 hover:bg-white/5 transition"><p class="text-[14px] font-medium text-soft">I will wait for a reply</p><p class="text-[12px] text-mute mt-0.5">No account needed</p></button>`;inputArea.appendChild(wrap);wrap.querySelectorAll('button').forEach(btn=>{btn.onclick=async()=>{const act=btn.getAttribute('data-act');if(act==='account'){addUser('Create account / log in');clearInput();await showAuthFlow()}else if(act==='calendar'){addUser('Pick a day and time');clearInput();await showCalendarFlow()}else{addUser('I will wait for a reply');clearInput();await addStudio(`Sounds good. We will reach out by phone or email soon. You can come back anytime and log in or book a slot.`);clearInput()}}})}
 async function showAuthFlow(){state.phase='auth';saveSession();await addStudio(`Create an account to message the owner directly, or log in if you already have one.`);clearInput();const wrap=document.createElement('div');wrap.className='fade-in space-y-3';wrap.innerHTML=`<div class="flex gap-2 mb-1"><button type="button" id="tab-signup" class="flex-1 py-2 rounded-full bg-white text-black text-[13px] font-medium">Sign up</button><button type="button" id="tab-login" class="flex-1 py-2 rounded-full border border-white/15 text-[13px] font-medium text-soft">Log in</button></div><form id="auth-form" class="space-y-2"><input id="auth-name" type="text" placeholder="Full name" class="w-full px-4 py-3 rounded-xl bg-raised border border-line text-[15px] text-white placeholder-mute" value="${escapeHtml(state.data.name)}"/><input id="auth-email" type="email" required placeholder="Email" class="w-full px-4 py-3 rounded-xl bg-raised border border-line text-[15px] text-white placeholder-mute" value="${escapeHtml(state.data.email)}"/><input id="auth-pass" type="password" required minlength="6" placeholder="Password (min 6 chars)" class="w-full px-4 py-3 rounded-xl bg-raised border border-line text-[15px] text-white placeholder-mute"/><p id="auth-error" class="text-[12px] text-red-400 hidden"></p><button type="submit" id="auth-submit" class="w-full py-3.5 rounded-full bg-white text-black text-[14px] font-medium">Create account</button></form><button type="button" id="auth-back" class="w-full text-center text-[12px] text-mute py-2">Back</button>`;inputArea.appendChild(wrap);let mode='signup';const nameInput=wrap.querySelector('#auth-name');const emailInput=wrap.querySelector('#auth-email');const passInput=wrap.querySelector('#auth-pass');const err=wrap.querySelector('#auth-error');const submitBtn=wrap.querySelector('#auth-submit');wrap.querySelector('#tab-signup').onclick=()=>{mode='signup';nameInput.classList.remove('hidden');submitBtn.textContent='Create account';wrap.querySelector('#tab-signup').className='flex-1 py-2 rounded-full bg-white text-black text-[13px] font-medium';wrap.querySelector('#tab-login').className='flex-1 py-2 rounded-full border border-white/15 text-[13px] font-medium text-soft'};wrap.querySelector('#tab-login').onclick=()=>{mode='login';nameInput.classList.add('hidden');submitBtn.textContent='Log in';wrap.querySelector('#tab-login').className='flex-1 py-2 rounded-full bg-white text-black text-[13px] font-medium';wrap.querySelector('#tab-signup').className='flex-1 py-2 rounded-full border border-white/15 text-[13px] font-medium text-soft'};wrap.querySelector('#auth-back').onclick=()=>{clearInput();showPostQuoteOptions()};wrap.querySelector('#auth-form').onsubmit=async(e)=>{e.preventDefault();err.classList.add('hidden');const email=emailInput.value.trim().toLowerCase();const pass=passInput.value;const name=nameInput.value.trim()||state.data.name;if(!email||pass.length<6){err.textContent='Use a valid email and password (6+ characters).';err.classList.remove('hidden');return}const users=loadJSON(KEYS.users,[]);if(mode==='signup'){if(users.some(u=>u.email===email)){err.textContent='That email already has an account. Log in instead.';err.classList.remove('hidden');return}const user={id:'U'+Date.now(),name,email,pass,phone:state.data.phone,created:new Date().toISOString()};users.push(user);saveJSON(KEYS.users,users);setAuthUser(user,true);addUser('Account created');clearInput();await enterLiveChat(true)}else{const user=users.find(u=>u.email===email&&u.pass===pass);if(!user){err.textContent='Email or password is wrong.';err.classList.remove('hidden');return}setAuthUser(user,true);addUser('Logged in');clearInput();await enterLiveChat(false)}}}
 async function enterLiveChat(isNew){state.phase='live';saveSession();statusLine.textContent='Live with the studio';if(isNew){await addStudio(`You are in. Message the owner anytime below. They see this thread in the studio dashboard.`)}else{await addStudio(`Welcome back. You are connected. Send a message below.`)}showLiveComposer(true)}
@@ -33,3 +33,47 @@ function restoreUI(){chatScroll.innerHTML='';state.messages.forEach(m=>{if(m.rol
 headerLogin.onclick=async()=>{if(state.user){if(state.phase!=='intake'){await enterLiveChat(false)}return}if(state.phase==='intake'){await addStudio(`You can log in after you finish the quote flow, or continue below.`);return}clearInput();await showAuthFlow()};
 state.user=getAuthUser();if(state.user){headerLogin.classList.remove('hidden');headerLogin.textContent=state.user.name.split(' ')[0]||'Account'}else{headerLogin.classList.remove('hidden')}
 if(loadSession()&&state.phase!=='intake'){restoreUI()}else{start()}
+
+
+/* File the quote request with McCluster.
+   Until now every booking made on this page was written to the visitor's
+   OWN browser (localStorage) and, if a Web3Forms key had ever been filled
+   in, emailed. The key was never filled in. So nothing a client sent here
+   ever reached Level 3 — the chat said "your quote request is in" and the
+   request was in nobody's hands.
+   POST /v1/inquiries is the plane's public intake: it creates the lead
+   under the level-3-media org, opens an inbox conversation for it, and
+   notifies the owner. The studio desk reads it back from there. The local
+   copy above stays as a courtesy for the visitor's own session; it is not
+   the record. */
+async function fileInquiry(){
+  const d = state.data;
+  const note = [
+    d.details,
+    d.budget ? `Budget: ${d.budget}` : '',
+    d.timeline ? `Timeline: ${d.timeline}` : '',
+    d.phone ? `Phone: ${d.phone}` : ''
+  ].filter(Boolean).join('\n');
+  try {
+    const res = await fetch('https://api.mccluster.org/v1/inquiries', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        org: 'level-3-media',
+        name: d.name,
+        email: d.email,
+        want: d.project_type,
+        note: note,
+        page: location.pathname,
+        source: d.source || 'Chat Booking Page'
+      })
+    });
+    if (!res.ok) throw new Error(String(res.status));
+    return true;
+  } catch (e) {
+    /* Say so rather than claiming it sent. A request the studio never
+       received is worse than one the visitor knows to resend. */
+    await addStudio(`That did not reach the studio. Email <strong class="text-white">level3mediallc@gmail.com</strong> directly and we will pick it up.`);
+    return false;
+  }
+}

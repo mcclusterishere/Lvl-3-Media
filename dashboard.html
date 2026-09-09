@@ -119,6 +119,12 @@
       <div id="trackList" style="margin-top:16px"></div>
     </section>
 
+    <section class="card hidden" id="inquiryCard">
+      <h2>Quote requests</h2>
+      <p class="muted">Everyone who has messaged you through the site. These land on the McCluster plane the moment they hit send — reply by email, and set where each one stands.</p>
+      <div id="inquiryList"><p class="muted">Loading…</p></div>
+    </section>
+
     <section class="card hidden" id="socialCard">
       <h2>Social</h2>
       <p class="muted">Your channels, accounts and publish queue live on the McCluster plane — the same place the desk sees them. This page shows and submits; it does not keep its own copy.</p>
@@ -190,15 +196,41 @@
          continuity signal, never a fingerprint and never a credential. */
       var DEVICE = "mcc.device_id";
 
-      function jget(k, fb) { try { var v = JSON.parse(localStorage.getItem(NS + k)); return v == null ? fb : v; } catch (e) { return fb; } }
-      function jset(k, v) { try { localStorage.setItem(NS + k, JSON.stringify(v)); } catch (e) {} }
-      function jdel(k) { try { localStorage.removeItem(NS + k); } catch (e) {} }
+      /* iOS private browsing exposes localStorage and then throws on
+         write, and the old helpers swallowed that silently — so a session
+         was "saved" to nowhere and sign-out cleared nothing. Keep a memory
+         copy as the fallback so the page behaves either way. */
+      var MEM = {};
+      var STORAGE_OK = true;
+
+      function jget(k, fb) {
+        try {
+          var raw = localStorage.getItem(NS + k);
+          if (raw != null) return JSON.parse(raw);
+        } catch (e) { STORAGE_OK = false; }
+        return Object.prototype.hasOwnProperty.call(MEM, k) ? MEM[k] : fb;
+      }
+      function jset(k, v) {
+        MEM[k] = v;
+        try { localStorage.setItem(NS + k, JSON.stringify(v)); } catch (e) { STORAGE_OK = false; }
+      }
+      function jdel(k) {
+        delete MEM[k];
+        try { localStorage.removeItem(NS + k); } catch (e) { STORAGE_OK = false; }
+      }
       function session() { return jget("session", null); }
       function saveSession(s) {
         if (s && !s.expires_at) s.expires_at = Math.floor(Date.now() / 1000) + (s.expires_in || 3600);
         jset("session", s);
       }
-      function clearSession() { jdel("session"); }
+      function clearSession() {
+        jdel("session");
+        /* js/mcc-auth.js on the main site mirrors the session under a
+           second key. Leaving it behind is how someone signs out and comes
+           back still signed in. */
+        try { localStorage.removeItem("mccdb_session"); } catch (e) {}
+        try { localStorage.removeItem("mcc_sess_keep"); } catch (e) {}
+      }
 
       function authHeaders() {
         var s = session();
@@ -303,13 +335,24 @@
         show(document.getElementById("providerCard"), !!s);
         show(document.getElementById("musicCard"), !!s);
         show(document.getElementById("socialCard"), !!s);
+        show(document.getElementById("inquiryCard"), !!s);
         document.getElementById("authErr").classList.add("hidden");
         document.getElementById("authOk").classList.add("hidden");
         if (s) {
-          document.getElementById("who").textContent = (s.user && (s.user.email || s.user.id)) || "Signed in";
+          var email = (s.user && (s.user.email || s.user.id)) || "your McCluster account";
+          document.getElementById("who").innerHTML =
+            '<span class="pill on" style="margin-right:8px">Signed in</span>' + escapeHtml(email);
+          document.getElementById("authStatus").textContent =
+            "Signed in to the M network as " + email + ".";
+          if (!STORAGE_OK) {
+            var warn = document.getElementById("authErr");
+            warn.textContent = "This browser is blocking site storage, so you will be signed out when the tab closes. Private browsing usually causes it.";
+            warn.classList.remove("hidden");
+          }
           touchM();
           loadProvider();
           loadTracks();
+          loadInquiries();
           loadChannels();
           loadAccounts();
           loadJobs();
@@ -353,15 +396,27 @@
 
       function signOut() {
         var s = session();
+        /* Clear FIRST, tell the server second. The old order meant a failed
+           or slow network call — or an already-expired token, which returns
+           403 "Session not found" — could leave someone still signed in on
+           a page that said it had signed them out. Locally signed out is
+           the part the person can see, so make that part unconditional. */
+        clearSession();
+        ORG_ID = null;
         if (s && s.access_token) {
           /* scope=local ends THIS device's session only. The default is
              global, which signs the account out of every phone and laptop
              it is open on — so one person tapping Sign out kicked everybody,
              including a client mid-upload. */
-          fetch(URL_ + "/auth/v1/logout?scope=local", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.access_token } }).catch(function () {});
+          fetch(URL_ + "/auth/v1/logout?scope=local", {
+            method: "POST",
+            headers: { apikey: KEY, Authorization: "Bearer " + s.access_token }
+          }).catch(function () {});
         }
-        clearSession();
         refreshUI();
+        var ok = document.getElementById("authOk");
+        ok.textContent = "Signed out on this device.";
+        ok.classList.remove("hidden");
       }
 
       function loadProvider() {
@@ -514,7 +569,7 @@
         opts = opts || {};
         return ensureFresh().then(function (s) {
           if (!s || !s.access_token) throw new Error("Sign in first.");
-          return fetch("https://api.mccluster.org" + path, {
+          return fetch(API_BASE + path, {
             method: opts.method || "GET",
             headers: { authorization: "Bearer " + s.access_token, "content-type": "application/json" },
             body: opts.body ? JSON.stringify(opts.body) : undefined
@@ -628,6 +683,52 @@
           err.textContent = e.message || "Could not queue that.";
           err.classList.remove("hidden");
         }).then(function () { btn.disabled = false; });
+      }
+
+      var API_BASE = "https://api.mccluster.org";
+      /* Exactly the Worker's BOOKING_STATES. Offering a word it does not
+         accept — 'booked' and 'lost' belong to the operator desk's older
+         vocabulary — puts a 400 behind a dropdown the client just used. */
+      var INQUIRY_STATES = ["new", "needs-reply", "qualified", "date-proposed", "confirmed", "completed", "archived", "declined"];
+
+      function loadInquiries() {
+        var box = document.getElementById("inquiryList");
+        return worker("/v1/clients/" + encodeURIComponent(ORG_SLUG) + "/inquiries")
+          .then(function (d) {
+            var rows = (d && (d.items || d.inquiries)) || [];
+            if (!rows.length) {
+              box.innerHTML = '<p class="muted">No quote requests yet. Anything sent through the booking form lands here.</p>';
+              return;
+            }
+            box.innerHTML = rows.map(function (q) {
+              var when = q.at ? new Date(q.at).toLocaleString() : "";
+              var opts = INQUIRY_STATES.map(function (st) {
+                return '<option value="' + st + '"' + (q.status === st ? " selected" : "") + '>' + st + '</option>';
+              }).join("");
+              return '<div class="track" style="align-items:flex-start;flex-wrap:wrap;gap:8px">' +
+                '<div style="flex:1 1 200px"><strong>' + escapeHtml(q.name || "Someone") + '</strong><small>' +
+                escapeHtml((q.want || "enquiry") + " · " + when) + '</small>' +
+                (q.note ? '<small style="display:block;margin-top:6px;color:#bbb">' + escapeHtml(q.note) + '</small>' : "") +
+                '</div>' +
+                '<a class="btn ghost" style="min-height:36px;font-size:11px" href="mailto:' + escapeHtml(q.email || "") +
+                '?subject=' + encodeURIComponent("Your Level 3 Media booking") + '">Reply</a>' +
+                '<select data-inq="' + escapeHtml(q.id) + '" style="padding:8px;border-radius:8px;background:#111;color:#eee;border:1px solid #2a2a2a">' +
+                opts + '</select></div>';
+            }).join("");
+            Array.prototype.forEach.call(box.querySelectorAll("select[data-inq]"), function (sel) {
+              sel.onchange = function () { setInquiryStatus(sel.getAttribute("data-inq"), sel.value, sel); };
+            });
+          })
+          .catch(function (e) { box.innerHTML = '<p class="muted">' + escapeHtml(e.message) + '</p>'; });
+      }
+
+      function setInquiryStatus(id, status, sel) {
+        sel.disabled = true;
+        worker("/v1/clients/" + encodeURIComponent(ORG_SLUG) + "/inquiries/" + encodeURIComponent(id), {
+          method: "PATCH",
+          body: { status: status }
+        }).catch(function (e) { alert(e.message || "Could not update that request."); })
+          .then(function () { sel.disabled = false; });
       }
 
       document.getElementById("btnQueue").onclick = queuePublish;
