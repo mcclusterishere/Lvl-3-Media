@@ -119,6 +119,39 @@
       <div id="trackList" style="margin-top:16px"></div>
     </section>
 
+    <section class="card hidden" id="socialCard">
+      <h2>Social</h2>
+      <p class="muted">Your channels, accounts and publish queue live on the McCluster plane — the same place the desk sees them. This page shows and submits; it does not keep its own copy.</p>
+
+      <h3 style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#8a8a8a;margin:18px 0 8px">Channels</h3>
+      <div id="chanList"><p class="muted">Loading channels…</p></div>
+
+      <h3 style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#8a8a8a;margin:18px 0 8px">Connected accounts</h3>
+      <div id="acctList"><p class="muted">Loading accounts…</p></div>
+
+      <h3 style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#8a8a8a;margin:18px 0 8px">Queue a reel</h3>
+      <p class="muted" id="pubNote">The plane publishes Instagram video today — trial or feed reel. The other channels are registered and wait on their credentials.</p>
+      <label>Account</label>
+      <select id="pubAccount" style="width:100%;padding:12px;border-radius:10px;background:#111;color:#eee;border:1px solid #2a2a2a"></select>
+      <label>Video URL</label>
+      <input id="pubVideo" placeholder="https://…/cut.mp4" />
+      <label>Caption</label>
+      <input id="pubCaption" placeholder="What it says under the video" />
+      <label>Mode</label>
+      <select id="pubMode" style="width:100%;padding:12px;border-radius:10px;background:#111;color:#eee;border:1px solid #2a2a2a">
+        <option value="trial">Trial reel (tested on non-followers first)</option>
+        <option value="reel">Feed reel (posts to the profile)</option>
+      </select>
+      <div class="stack">
+        <button type="button" id="btnQueue">Queue it</button>
+      </div>
+      <p class="err hidden" id="pubErr"></p>
+      <p class="ok hidden" id="pubOk"></p>
+
+      <h3 style="font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#8a8a8a;margin:18px 0 8px">Publish queue</h3>
+      <div id="jobList"><p class="muted">Loading queue…</p></div>
+    </section>
+
     <section class="card">
       <h2>Shortcuts</h2>
       <div class="stack">
@@ -269,6 +302,7 @@
         show(document.getElementById("authOut"), !!s);
         show(document.getElementById("providerCard"), !!s);
         show(document.getElementById("musicCard"), !!s);
+        show(document.getElementById("socialCard"), !!s);
         document.getElementById("authErr").classList.add("hidden");
         document.getElementById("authOk").classList.add("hidden");
         if (s) {
@@ -276,6 +310,9 @@
           touchM();
           loadProvider();
           loadTracks();
+          loadChannels();
+          loadAccounts();
+          loadJobs();
         }
       }
 
@@ -466,6 +503,134 @@
         }).finally(function () { btn.disabled = false; });
       }
 
+      /* The plane's social API. Submission goes through the Worker on
+         purpose: social_publish_jobs is SELECT-only for a browser client,
+         so a satellite reads the queue directly and asks the plane to add
+         to it. That is the law here — display and submit, never a second
+         source of truth. */
+      var ORG_ID = null;
+
+      function worker(path, opts) {
+        opts = opts || {};
+        return ensureFresh().then(function (s) {
+          if (!s || !s.access_token) throw new Error("Sign in first.");
+          return fetch("https://api.mccluster.org" + path, {
+            method: opts.method || "GET",
+            headers: { authorization: "Bearer " + s.access_token, "content-type": "application/json" },
+            body: opts.body ? JSON.stringify(opts.body) : undefined
+          }).then(function (r) {
+            return r.text().then(function (t) {
+              var d = null;
+              try { d = t ? JSON.parse(t) : null; } catch (e) { d = t; }
+              if (!r.ok) throw new Error((d && (d.error || d.message)) || r.statusText);
+              return d;
+            });
+          });
+        });
+      }
+
+      function loadOrg() {
+        if (ORG_ID) return Promise.resolve(ORG_ID);
+        return api("/rest/v1/orgs?slug=eq." + encodeURIComponent(ORG_SLUG) + "&select=id")
+          .then(function (rows) {
+            ORG_ID = (Array.isArray(rows) && rows[0]) ? rows[0].id : null;
+            return ORG_ID;
+          });
+      }
+
+      function loadChannels() {
+        var box = document.getElementById("chanList");
+        return api("/rest/v1/org_channels?select=channel,enabled,account_label,connected_at,last_error&order=channel")
+          .then(function (rows) {
+            if (!rows || !rows.length) { box.innerHTML = '<p class="muted">No channels registered for this org yet.</p>'; return; }
+            box.innerHTML = rows.map(function (c) {
+              var state = c.connected_at ? "connected" : (c.enabled ? "on, not connected" : "awaiting credential");
+              return '<div class="track"><div><strong>' + escapeHtml(c.channel) + '</strong><small>' +
+                escapeHtml(c.account_label || state) + '</small></div><span class="pill' +
+                (c.connected_at ? ' on' : '') + '">' + escapeHtml(state) + '</span></div>';
+            }).join("");
+          })
+          .catch(function (e) { box.innerHTML = '<p class="muted">' + escapeHtml(e.message) + '</p>'; });
+      }
+
+      function loadAccounts() {
+        var box = document.getElementById("acctList");
+        var sel = document.getElementById("pubAccount");
+        return loadOrg().then(function (org) {
+          if (!org) throw new Error("No McCluster organization for this account.");
+          return worker("/v1/social/accounts?org_id=" + encodeURIComponent(org));
+        }).then(function (d) {
+          var rows = (d && d.accounts) || [];
+          if (!rows.length) {
+            box.innerHTML = '<p class="muted">No account connected yet. Instagram is connected once by the McCluster desk — the token is held on the plane, never in this page.</p>';
+            sel.innerHTML = '<option value="">No connected account</option>';
+            document.getElementById("btnQueue").disabled = true;
+            return;
+          }
+          box.innerHTML = rows.map(function (a) {
+            return '<div class="track"><div><strong>' + escapeHtml(a.handle || a.platform) + '</strong><small>' +
+              escapeHtml(a.platform + " · " + a.status) + '</small></div></div>';
+          }).join("");
+          sel.innerHTML = rows.map(function (a) {
+            return '<option value="' + escapeHtml(a.id) + '">' + escapeHtml((a.handle || a.platform) + " · " + a.platform) + '</option>';
+          }).join("");
+          document.getElementById("btnQueue").disabled = false;
+        }).catch(function (e) {
+          box.innerHTML = '<p class="muted">' + escapeHtml(e.message) + '</p>';
+          sel.innerHTML = '<option value="">Unavailable</option>';
+          document.getElementById("btnQueue").disabled = true;
+        });
+      }
+
+      function loadJobs() {
+        var box = document.getElementById("jobList");
+        return api("/rest/v1/social_publish_jobs?select=id,state,publish_mode,scheduled_at,last_error&order=created_at.desc&limit=10")
+          .then(function (rows) {
+            if (!rows || !rows.length) { box.innerHTML = '<p class="muted">Nothing queued yet.</p>'; return; }
+            box.innerHTML = rows.map(function (j) {
+              return '<div class="track"><div><strong>' + escapeHtml(j.publish_mode) + '</strong><small>' +
+                escapeHtml(new Date(j.scheduled_at).toLocaleString() + (j.last_error ? " · " + j.last_error : "")) +
+                '</small></div><span class="pill' + (j.state === "published" ? " on" : "") + '">' + escapeHtml(j.state) + '</span></div>';
+            }).join("");
+          })
+          .catch(function (e) { box.innerHTML = '<p class="muted">' + escapeHtml(e.message) + '</p>'; });
+      }
+
+      function queuePublish() {
+        var err = document.getElementById("pubErr");
+        var ok = document.getElementById("pubOk");
+        var btn = document.getElementById("btnQueue");
+        err.classList.add("hidden");
+        ok.classList.add("hidden");
+        var account = document.getElementById("pubAccount").value;
+        var video = document.getElementById("pubVideo").value.trim();
+        if (!account) { err.textContent = "No connected account to publish to yet."; err.classList.remove("hidden"); return; }
+        if (!video) { err.textContent = "A video URL is required — the plane publishes video, not text."; err.classList.remove("hidden"); return; }
+        btn.disabled = true;
+        loadOrg().then(function (org) {
+          return worker("/v1/social/publish", {
+            method: "POST",
+            body: {
+              org_id: org,
+              account_id: account,
+              video_url: video,
+              caption: document.getElementById("pubCaption").value.trim(),
+              publish_mode: document.getElementById("pubMode").value
+            }
+          });
+        }).then(function () {
+          ok.textContent = "Queued on the plane.";
+          ok.classList.remove("hidden");
+          document.getElementById("pubVideo").value = "";
+          document.getElementById("pubCaption").value = "";
+          return loadJobs();
+        }).catch(function (e) {
+          err.textContent = e.message || "Could not queue that.";
+          err.classList.remove("hidden");
+        }).then(function () { btn.disabled = false; });
+      }
+
+      document.getElementById("btnQueue").onclick = queuePublish;
       document.getElementById("btnSignIn").onclick = signIn;
       document.getElementById("btnSignUp").onclick = signUp;
       document.getElementById("btnSignOut").onclick = signOut;
