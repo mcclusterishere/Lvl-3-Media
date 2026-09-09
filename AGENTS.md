@@ -13,7 +13,7 @@ Canonical law lives in the control repo. If this file and that file disagree, th
 - Agent law: https://github.com/mcclusterishere/mccluster/blob/main/AGENTS.md
 - Ecosystem map: https://github.com/mcclusterishere/mccluster/blob/main/docs/control-plane/ECOSYSTEM.md
 - Cloudflare project: `mccluster` (public edge `matthew.mccluster.org` / `mccluster.org`)
-- Worker: `mccluster-core` (`api.mccluster.org`)
+- Worker: `mccluster` (`api.mccluster.org`) — there is no `mccluster-core`
 - Data: Supabase `zmnhbrjyhxzhkxmhkexs`
 
 ## What you are allowed to do here

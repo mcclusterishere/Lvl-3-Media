@@ -66,18 +66,19 @@
 
     <section class="card" id="authCard">
       <h2>Account</h2>
-      <p class="muted" id="authStatus">Sign in with your McCluster account (or create one). Same auth as the main site.</p>
+      <p class="muted" id="authStatus">Sign in with the Level 3 Media M account. One M Account across McCluster — same sign-in as the main site.</p>
       <p class="err hidden" id="authErr"></p>
       <p class="ok hidden" id="authOk"></p>
       <div id="authForm">
         <label>Email</label>
-        <input id="email" type="email" autocomplete="email" placeholder="you@studio.com" />
+        <input id="email" type="email" autocomplete="email" placeholder="you@studio.com" value="level3media@gmail.com" />
         <label>Password</label>
         <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" />
         <div class="stack">
           <button type="button" id="btnSignIn">Sign in</button>
           <button type="button" class="ghost" id="btnSignUp">Create account</button>
         </div>
+        <p class="muted" style="margin-top:10px">Change the password on your <a href="https://matthew.mccluster.org/account.html" rel="noopener" style="color:#ccc">M Account</a>. The password handed over at launch is temporary — change it on first sign-in.</p>
       </div>
       <div id="authOut" class="hidden">
         <p class="muted" id="who"></p>
@@ -136,6 +137,17 @@
       var KEY = "sb_publishable_kr5NujBZ1n518IUMDoa2dQ_tqQAJef4";
       var NS = "mccdb_";
       var PROVIDER_SLUG = "level-3-media";
+      /* Registered on the control plane by
+         supabase/migrations/20260909233000_level_3_media_client_org.sql in
+         mcclusterishere/mccluster. m_touch_app() rejects an app key it does
+         not know, so these two strings and that migration move together. */
+      var APP_KEY = "level-3-media-web";
+      var ORG_SLUG = "level-3-media";
+      /* Same storage key the canonical client (js/mcc-auth.js) uses, so a
+         browser that has already met McCluster keeps one device identity
+         instead of growing a second one. Random and first-party: it is a
+         continuity signal, never a fingerprint and never a credential. */
+      var DEVICE = "mcc.device_id";
 
       function jget(k, fb) { try { var v = JSON.parse(localStorage.getItem(NS + k)); return v == null ? fb : v; } catch (e) { return fb; } }
       function jset(k, v) { try { localStorage.setItem(NS + k, JSON.stringify(v)); } catch (e) {} }
@@ -173,6 +185,44 @@
 
       function show(el, on) { el.classList.toggle("hidden", !on); }
 
+      function uuid() {
+        if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID();
+        var a = new Uint8Array(16);
+        window.crypto.getRandomValues(a);
+        a[6] = (a[6] & 15) | 64;
+        a[8] = (a[8] & 63) | 128;
+        var h = Array.prototype.map.call(a, function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+        return h.slice(0, 8) + "-" + h.slice(8, 12) + "-" + h.slice(12, 16) + "-" + h.slice(16, 20) + "-" + h.slice(20);
+      }
+
+      function deviceId() {
+        var id;
+        try { id = localStorage.getItem(DEVICE); } catch (e) { id = null; }
+        if (id && id.length >= 20) return id;
+        id = uuid();
+        try { localStorage.setItem(DEVICE, id); } catch (e) {}
+        return id;
+      }
+
+      /* Tell the M network this account used this app. The plane keeps the
+         registry of who is on what; this page does not keep its own. If the
+         app is not registered yet the RPC refuses and the desk still works,
+         which is the right failure: an unregistered sign-in is untracked,
+         not broken. */
+      function touchM() {
+        var s = session();
+        if (!s || !s.access_token) return Promise.resolve(null);
+        return api("/rest/v1/rpc/m_touch_app", {
+          method: "POST",
+          body: {
+            p_app_key: APP_KEY,
+            p_device_key: deviceId(),
+            p_org_slug: ORG_SLUG,
+            p_meta: { origin: location.origin, locale: (navigator.language || "") }
+          }
+        }).catch(function () { return null; });
+      }
+
       function refreshUI() {
         var s = session();
         show(document.getElementById("authForm"), !s);
@@ -183,6 +233,7 @@
         document.getElementById("authOk").classList.add("hidden");
         if (s) {
           document.getElementById("who").textContent = (s.user && (s.user.email || s.user.id)) || "Signed in";
+          touchM();
           loadProvider();
           loadTracks();
         }
