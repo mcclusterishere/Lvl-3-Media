@@ -141,6 +141,14 @@
          supabase/migrations/20260909233000_level_3_media_client_org.sql in
          mcclusterishere/mccluster. m_touch_app() rejects an app key it does
          not know, so these two strings and that migration move together. */
+      /* providers is hardened with COLUMN-level grants: a client may set
+         name, craft and rate, and may never set plan, stripe_acct,
+         charges_enabled or stripe_customer. So this page must never ask for
+         `*` — the two columns it is not granted turn the whole read into a
+         403 — and must never upsert, because ON CONFLICT DO UPDATE writes
+         slug and uid, which it is not granted either. Ask for exactly the
+         columns we hold. */
+      var PROVIDER_COLS = "slug,uid,name,craft,rate,plan,charges_enabled";
       var APP_KEY = "level-3-media-web";
       var ORG_SLUG = "level-3-media";
       /* Same storage key the canonical client (js/mcc-auth.js) uses, so a
@@ -267,7 +275,9 @@
           })
           .catch(function (e) {
             var box = document.getElementById("authErr");
-            box.textContent = e.message || "Sign up failed";
+            box.textContent = /rate limit/i.test(e.message || "")
+              ? "McCluster is over its email limit for the hour, so new accounts cannot be confirmed right now. Try again shortly, or ask the desk to create the account for you."
+              : (e.message || "Sign up failed");
             box.classList.remove("hidden");
           });
       }
@@ -282,10 +292,10 @@
       }
 
       function loadProvider() {
-        api("/rest/v1/providers?slug=eq." + encodeURIComponent(PROVIDER_SLUG) + "&select=*")
+        var pill = document.getElementById("providerPill");
+        return api("/rest/v1/providers?slug=eq." + encodeURIComponent(PROVIDER_SLUG) + "&select=" + PROVIDER_COLS)
           .then(function (rows) {
             var p = Array.isArray(rows) ? rows[0] : null;
-            var pill = document.getElementById("providerPill");
             if (p) {
               pill.textContent = "Provider · " + p.slug + (p.charges_enabled ? " · payouts on" : " · payouts pending");
               pill.classList.add("on");
@@ -295,18 +305,51 @@
               pill.textContent = "Provider not claimed";
               pill.classList.remove("on");
             }
-          }).catch(function () {});
+            return p;
+          })
+          /* Never swallow this one. An empty catch here is why the card
+             could read "Provider not claimed" to someone who had claimed
+             it: the request was failing and nothing said so. */
+          .catch(function (e) {
+            pill.textContent = "Provider status unavailable";
+            pill.classList.remove("on");
+            pill.title = e.message || "Could not read the provider record.";
+            return null;
+          });
       }
 
       function claimProvider() {
         var name = document.getElementById("provName").value.trim() || "Level 3 Media";
         var craft = document.getElementById("provCraft").value.trim() || "production";
-        api("/rest/v1/providers?on_conflict=slug", {
-          method: "POST",
-          headers: { Prefer: "resolution=merge-duplicates,return=representation" },
-          body: { slug: PROVIDER_SLUG, name: name, craft: craft, rate: 0 }
-        }).then(function () { loadProvider(); })
-          .catch(function (e) { alert(e.message || "Could not claim provider."); });
+        var btn = document.getElementById("btnClaim");
+        var s = session();
+        var me = s && s.user && s.user.id;
+        btn.disabled = true;
+        /* Look first, then insert OR patch. The old single upsert could not
+           work against the column grants, and failed with a raw Postgres
+           permission error in an alert box. */
+        api("/rest/v1/providers?slug=eq." + encodeURIComponent(PROVIDER_SLUG) + "&select=" + PROVIDER_COLS)
+          .then(function (rows) {
+            var mine = Array.isArray(rows) ? rows[0] : null;
+            if (mine && mine.uid !== me) {
+              throw new Error("The " + PROVIDER_SLUG + " slot is held by a different McCluster account. Sign in with that one, or ask the desk to move it.");
+            }
+            if (mine) {
+              return api("/rest/v1/providers?slug=eq." + encodeURIComponent(PROVIDER_SLUG), {
+                method: "PATCH",
+                headers: { Prefer: "return=minimal" },
+                body: { name: name, craft: craft, rate: 0 }
+              });
+            }
+            return api("/rest/v1/providers", {
+              method: "POST",
+              headers: { Prefer: "return=minimal" },
+              body: { slug: PROVIDER_SLUG, name: name, craft: craft, rate: 0 }
+            });
+          })
+          .then(function () { return loadProvider(); })
+          .catch(function (e) { alert(e.message || "Could not claim provider."); })
+          .then(function () { btn.disabled = false; });
       }
 
       function escapeHtml(s) {
