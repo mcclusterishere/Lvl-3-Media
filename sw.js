@@ -1,5 +1,5 @@
 const BASE = "/Lvl-3-Media/";
-const CACHE = "level3-pages-v2";
+const CACHE = "level3-pages-v3";
 const APP_SHELL = [BASE, `${BASE}l3-skin.css`, `${BASE}l3-enhance.js`, `${BASE}manifest.webmanifest`, `${BASE}favicon.svg`, `${BASE}icon-192.png`, `${BASE}icon-512.png`];
 
 self.addEventListener("install", (event) => {
@@ -15,10 +15,15 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (request.method !== "GET" || url.origin !== self.location.origin || !url.pathname.startsWith(BASE)) return;
   if (request.mode === "navigate") {
+    /* Cache each page under its OWN url. This used to store every
+       navigation under BASE, so opening the studio desk overwrote the
+       cached home page with dashboard HTML — and the next flaky-network
+       navigation to any page served back whichever page was cached last. */
     event.respondWith(fetch(request).then((response) => {
-      caches.open(CACHE).then((cache) => cache.put(BASE, response.clone()));
+      const copy = response.clone();
+      caches.open(CACHE).then((cache) => cache.put(request, copy));
       return response;
-    }).catch(() => caches.match(BASE)));
+    }).catch(() => caches.match(request).then((hit) => hit || caches.match(BASE))));
     return;
   }
   event.respondWith(caches.match(request).then((cached) => cached || fetch(request).then((response) => {

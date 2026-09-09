@@ -161,7 +161,10 @@
       function jset(k, v) { try { localStorage.setItem(NS + k, JSON.stringify(v)); } catch (e) {} }
       function jdel(k) { try { localStorage.removeItem(NS + k); } catch (e) {} }
       function session() { return jget("session", null); }
-      function saveSession(s) { jset("session", s); }
+      function saveSession(s) {
+        if (s && !s.expires_at) s.expires_at = Math.floor(Date.now() / 1000) + (s.expires_in || 3600);
+        jset("session", s);
+      }
       function clearSession() { jdel("session"); }
 
       function authHeaders() {
@@ -172,8 +175,37 @@
         return h;
       }
 
+      /* An access token lasts about an hour. Nothing here ever renewed one,
+         so the desk went on SHOWING a signed-in account (the session was
+         still sitting in localStorage) while every request behind it came
+         back 401. That is the "sometimes it works, sometimes it doesn't":
+         it worked until the hour was up, then quietly stopped. Refresh
+         before the token goes stale, using the refresh token GoTrue already
+         gave us. Raw fetch on purpose — going through api() here would
+         recurse. */
+      function ensureFresh() {
+        var s = session();
+        if (!s || !s.refresh_token) return Promise.resolve(s);
+        if (s.expires_at && s.expires_at > (Date.now() / 1000) + 60) return Promise.resolve(s);
+        return fetch(URL_ + "/auth/v1/token?grant_type=refresh_token", {
+          method: "POST",
+          headers: { apikey: KEY, "Content-Type": "application/json" },
+          body: JSON.stringify({ refresh_token: s.refresh_token })
+        }).then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (d) {
+            if (d && d.access_token) { saveSession(d); return d; }
+            clearSession();
+            return null;
+          })
+          .catch(function () { return session(); });
+      }
+
       function api(path, opts) {
         opts = opts || {};
+        return ensureFresh().then(function () { return apiRaw(path, opts); });
+      }
+
+      function apiRaw(path, opts) {
         return fetch(URL_ + path, {
           method: opts.method || "GET",
           headers: Object.assign(authHeaders(), opts.headers || {}),
@@ -285,7 +317,11 @@
       function signOut() {
         var s = session();
         if (s && s.access_token) {
-          fetch(URL_ + "/auth/v1/logout", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.access_token } }).catch(function () {});
+          /* scope=local ends THIS device's session only. The default is
+             global, which signs the account out of every phone and laptop
+             it is open on — so one person tapping Sign out kicked everybody,
+             including a client mid-upload. */
+          fetch(URL_ + "/auth/v1/logout?scope=local", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.access_token } }).catch(function () {});
         }
         clearSession();
         refreshUI();
