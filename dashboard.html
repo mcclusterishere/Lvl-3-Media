@@ -691,9 +691,25 @@
          vocabulary — puts a 400 behind a dropdown the client just used. */
       var INQUIRY_STATES = ["new", "needs-reply", "qualified", "date-proposed", "confirmed", "completed", "archived", "declined"];
 
+      var THREADS = {};
+
+      function loadThreadIndex() {
+        return worker("/v1/clients/" + encodeURIComponent(ORG_SLUG) + "/threads")
+          .then(function (d) {
+            THREADS = {};
+            ((d && d.items) || []).forEach(function (t) {
+              if (t.contact && t.contact.email) THREADS[t.contact.email.toLowerCase()] = t;
+            });
+            return THREADS;
+          })
+          .catch(function () { return {}; });
+      }
+
       function loadInquiries() {
         var box = document.getElementById("inquiryList");
-        return worker("/v1/clients/" + encodeURIComponent(ORG_SLUG) + "/inquiries")
+        return loadThreadIndex().then(function () {
+          return worker("/v1/clients/" + encodeURIComponent(ORG_SLUG) + "/inquiries");
+        })
           .then(function (d) {
             var rows = (d && (d.items || d.inquiries)) || [];
             if (!rows.length) {
@@ -702,6 +718,7 @@
             }
             box.innerHTML = rows.map(function (q) {
               var when = q.at ? new Date(q.at).toLocaleString() : "";
+              var thread = q.email ? THREADS[String(q.email).toLowerCase()] : null;
               var opts = INQUIRY_STATES.map(function (st) {
                 return '<option value="' + st + '"' + (q.status === st ? " selected" : "") + '>' + st + '</option>';
               }).join("");
@@ -710,16 +727,86 @@
                 escapeHtml((q.want || "enquiry") + " · " + when) + '</small>' +
                 (q.note ? '<small style="display:block;margin-top:6px;color:#bbb">' + escapeHtml(q.note) + '</small>' : "") +
                 '</div>' +
-                '<a class="btn ghost" style="min-height:36px;font-size:11px" href="mailto:' + escapeHtml(q.email || "") +
-                '?subject=' + encodeURIComponent("Your Level 3 Media booking") + '">Reply</a>' +
+                (thread
+                  ? '<button type="button" class="ghost" data-thread="' + escapeHtml(thread.id) + '" style="min-height:36px;font-size:11px">Reply here</button>'
+                  : '<a class="btn ghost" style="min-height:36px;font-size:11px" href="mailto:' + escapeHtml(q.email || "") + '">Email</a>') +
                 '<select data-inq="' + escapeHtml(q.id) + '" style="padding:8px;border-radius:8px;background:#111;color:#eee;border:1px solid #2a2a2a">' +
-                opts + '</select></div>';
+                opts + '</select>' +
+                '<div class="thread-open" data-for="' + escapeHtml(thread ? thread.id : "") + '" style="flex:1 0 100%"></div></div>';
             }).join("");
             Array.prototype.forEach.call(box.querySelectorAll("select[data-inq]"), function (sel) {
               sel.onchange = function () { setInquiryStatus(sel.getAttribute("data-inq"), sel.value, sel); };
             });
+            Array.prototype.forEach.call(box.querySelectorAll("button[data-thread]"), function (btn) {
+              btn.onclick = function () { openThread(btn.getAttribute("data-thread"), btn); };
+            });
           })
           .catch(function (e) { box.innerHTML = '<p class="muted">' + escapeHtml(e.message) + '</p>'; });
+      }
+
+      /* The conversation behind an inquiry, and the box to answer it in.
+         The reply goes through the plane so it is recorded as a message on
+         the thread whatever the mail provider does with it. */
+      function openThread(id, btn) {
+        var panel = document.querySelector('.thread-open[data-for="' + id + '"]');
+        if (!panel) return;
+        if (panel.innerHTML) { panel.innerHTML = ""; btn.textContent = "Reply here"; return; }
+        btn.textContent = "Hide";
+        panel.innerHTML = '<p class="muted" style="margin-top:10px">Loading the conversation…</p>';
+        worker("/v1/clients/" + encodeURIComponent(ORG_SLUG) + "/threads/" + encodeURIComponent(id))
+          .then(function (d) {
+            var msgs = (d && d.messages) || [];
+            panel.innerHTML =
+              '<div style="margin-top:10px;border-top:1px solid #222;padding-top:10px">' +
+              (msgs.length
+                ? msgs.map(function (m) {
+                    var mine = m.direction === "out";
+                    return '<div style="margin:6px 0;padding:8px 10px;border-radius:10px;background:' +
+                      (mine ? "#15200f" : "#141414") + ';border:1px solid ' + (mine ? "#2c4218" : "#242424") + '">' +
+                      '<small style="color:#8a8a8a">' + (mine ? "You" : "Them") + " · " +
+                      escapeHtml(new Date(m.at).toLocaleString()) +
+                      (m.state && m.state !== "sent" && m.state !== "delivered" ? " · " + escapeHtml(m.state) : "") +
+                      '</small><div style="margin-top:4px;white-space:pre-wrap">' + escapeHtml(m.body || "") + '</div></div>';
+                  }).join("")
+                : '<p class="muted">No messages on this thread yet.</p>') +
+              '<textarea id="rp-' + id + '" rows="3" placeholder="Write your reply…" style="width:100%;margin-top:10px;padding:12px;border-radius:10px;background:#111;color:#eee;border:1px solid #2a2a2a"></textarea>' +
+              '<div class="stack"><button type="button" id="sb-' + id + '">Send reply</button></div>' +
+              '<p class="err hidden" id="re-' + id + '"></p><p class="ok hidden" id="ro-' + id + '"></p></div>';
+            document.getElementById("sb-" + id).onclick = function () { sendReply(id); };
+          })
+          .catch(function (e) { panel.innerHTML = '<p class="muted">' + escapeHtml(e.message) + '</p>'; });
+      }
+
+      function sendReply(id) {
+        var ta = document.getElementById("rp-" + id);
+        var err = document.getElementById("re-" + id);
+        var ok = document.getElementById("ro-" + id);
+        var btn = document.getElementById("sb-" + id);
+        var text = (ta.value || "").trim();
+        err.classList.add("hidden");
+        ok.classList.add("hidden");
+        if (!text) { err.textContent = "Write something first."; err.classList.remove("hidden"); return; }
+        btn.disabled = true;
+        worker("/v1/clients/" + encodeURIComponent(ORG_SLUG) + "/threads/" + encodeURIComponent(id) + "/reply", {
+          method: "POST",
+          body: { body: text }
+        }).then(function () {
+          ta.value = "";
+          ok.textContent = "Sent.";
+          ok.classList.remove("hidden");
+          var panel = document.querySelector('.thread-open[data-for="' + id + '"]');
+          if (panel) { panel.innerHTML = ""; }
+          var btn2 = document.querySelector('button[data-thread="' + id + '"]');
+          if (btn2) openThread(id, btn2);
+        }).catch(function (e) {
+          /* The plane answers 502 when the mail did not leave but the
+             message was still recorded. Say exactly that rather than
+             letting him think it went. */
+          err.textContent = e.status === 502
+            ? "Saved on the thread, but the email did not send. McCluster has no verified sender for Level 3 yet."
+            : (e.message || "Could not send that.");
+          err.classList.remove("hidden");
+        }).then(function () { btn.disabled = false; });
       }
 
       function setInquiryStatus(id, status, sel) {
