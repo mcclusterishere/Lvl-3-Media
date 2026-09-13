@@ -13,8 +13,9 @@ Level 3 Media is a McCluster satellite product. The authoritative ecosystem repo
 
 The Level 3 owner can operate the business without McCluster administrator intervention after the one-time owner claim:
 
-- sign in with a unique **McCluster ID** + password;
-- receive the McCluster ID automatically from the canonical McCluster identity system during account creation;
+- create/use a canonical McCluster ecosystem account;
+- choose a globally unique **McCluster ID** and sign in with McCluster ID + password;
+- update the McCluster ID through the canonical McCluster identity contract;
 - change the password;
 - connect/finish the Level 3 Stripe payout account;
 - choose and self-manage the Level 3 platform subscription;
@@ -27,9 +28,9 @@ The Level 3 owner can operate the business without McCluster administrator inter
 - issue refunds; full refunds revoke digital-download entitlements;
 - manage store name, description, support email, terms, refund policy, and storefront availability.
 
-A **McCluster ID is an ecosystem identity, not a Level 3-specific username**. The current generator uses a random word plus four digits and guarantees uniqueness case-insensitively. Level 3 consumes that identity; it does not create a competing identity namespace.
+A **McCluster ID is an ecosystem identity, not a Level 3-specific username**. The person chooses it and it is globally unique case-insensitively. Level 3 consumes the canonical McCluster identity; it does not create a competing identity namespace. Changing the public McCluster ID does not change the immutable person/account UUID or historical records.
 
-Level 3's role is isolated to the Level 3 organization/app. It grants no authority over McCluster or any other satellite.
+Level 3's role is isolated to the Level 3 organization/app. It grants no authority over McCluster or any other satellite/customer ecosystem.
 
 ## Billing gate
 
@@ -82,9 +83,11 @@ Level 3-specific database objects include:
 - `l3_activity`
 - `l3_auth_attempts`
 
-Level 3 also participates in canonical McCluster objects such as `platform_profiles`, `platform_apps`, `platform_user_apps`, `orgs`, `org_members`, `org_stripe_accounts`, `platform_fee_policies`, and `stripe_events`.
+Level 3 also participates in canonical McCluster objects such as `m_people`, `m_auth_user_links`, `platform_profiles`, `platform_apps`, `platform_user_apps`, `orgs`, `org_members`, `org_stripe_accounts`, `platform_fee_policies`, and `stripe_events`.
 
-`platform_profiles.mccluster_id` is the canonical human-facing McCluster identifier. The previous `cluster_id` name is retired.
+`m_people.id` is the immutable ecosystem person key; `platform_profiles.mccluster_id` is the canonical human-facing McCluster identifier. The previous `cluster_id` name is retired.
+
+The broader McCluster Network foundation is canonical in the McCluster repo (`docs/architecture/identity-network.md`) and uses `network_profiles`, `network_follows`, `network_posts`, `network_reactions`, and `network_activity`. Level 3 may publish approved activity into that network later, but it does not own the social graph.
 
 Edge functions:
 
