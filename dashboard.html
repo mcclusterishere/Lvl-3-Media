@@ -17,9 +17,9 @@
       <div class="brand">LEVEL 3 MEDIA</div>
       <p class="muted">Owner Console · powered by the McCluster ecosystem</p>
       <h1>Sign in</h1>
-      <p class="muted">Use your Cluster ID and password. Your email is not your dashboard username.</p>
+      <p class="muted">Use your McCluster ID and password. Your email is not your dashboard username.</p>
       <form id="loginForm" class="stack">
-        <input id="clusterLogin" autocomplete="username" placeholder="Cluster ID" required />
+        <input id="mcclusterLogin" autocomplete="username" placeholder="McCluster ID" required />
         <input id="passwordLogin" type="password" autocomplete="current-password" placeholder="Password" required />
         <button type="submit">Sign in</button>
       </form>
@@ -29,11 +29,10 @@
       <div class="brand">LEVEL 3 MEDIA</div>
       <p class="muted">One-time owner activation</p>
       <h1>Claim your console</h1>
-      <p class="muted">Choose the Cluster ID and password you will use from now on. This one-time link grants access only to Level 3 Media.</p>
+      <p class="muted">Create your account and McCluster will assign your McCluster ID automatically. This one-time link grants access only to Level 3 Media.</p>
       <form id="claimForm" class="stack">
         <input id="claimName" autocomplete="name" placeholder="Your name" required />
         <input id="claimEmail" type="email" autocomplete="email" placeholder="Email" required />
-        <input id="claimCluster" autocomplete="username" placeholder="Choose Cluster ID (example: lvl3owner)" required />
         <input id="claimPassword" type="password" autocomplete="new-password" minlength="10" placeholder="Choose password · 10+ characters" required />
         <button type="submit">Create Level 3 owner account</button>
       </form>
@@ -146,16 +145,16 @@
 
       <article class="card half">
         <h2>Account & security</h2>
+        <div class="stack">
+          <label>McCluster ID</label>
+          <input id="mcclusterId" readonly />
+          <p class="file-note">Your McCluster ID is your ecosystem identity. It is assigned by McCluster, not created as a Level 3-only username.</p>
+        </div>
+        <hr style="border:0;border-top:1px solid #272727;margin:22px 0" />
         <form id="passwordForm" class="stack">
           <label>Change password</label>
           <input id="newPassword" type="password" autocomplete="new-password" minlength="10" placeholder="New password · 10+ characters" required />
           <button type="submit">Change password</button>
-        </form>
-        <hr style="border:0;border-top:1px solid #272727;margin:22px 0" />
-        <form id="clusterForm" class="stack">
-          <label>Change Cluster ID</label>
-          <input id="clusterNew" pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,31}" placeholder="Cluster ID" required />
-          <button type="submit">Change Cluster ID</button>
         </form>
         <p class="file-note">Your Level 3 role cannot grant authority over the McCluster ecosystem or other clients.</p>
       </article>
