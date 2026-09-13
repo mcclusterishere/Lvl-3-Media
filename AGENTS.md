@@ -1,36 +1,88 @@
-# MCCLUSTER CONTROL PLANE — READ THIS FIRST
+# LEVEL 3 MEDIA — AGENT AUTHORITY RULES
 
-This repository (`mcclusterishere/Lvl-3-Media`) is a **product** satellite of the McCluster control plane.
-Default branch: `main`.
+This repository (`mcclusterishere/Lvl-3-Media`) is a Level 3 Media product repository inside the McCluster ecosystem.
 
-# McCluster satellite — read this before you touch anything
+## AUTHORITY HIERARCHY — NON-NEGOTIABLE
 
-This repository is a **satellite** of the McCluster control plane.
+1. **`mcclusterishere/mccluster` is the authoritative McCluster ecosystem repository.**
+2. **`mcclusterishere/Here` is legacy/abandoned and is NEVER authoritative for architecture, backend, deployment, billing, auth, data, product direction, or ecosystem decisions.**
+3. Level 3 Media owns its own product implementation and may own its own backend services, database schema, storage, auth, commerce, admin, and deployment where the owner explicitly designs it that way.
+4. If any historical file, README, comment, branch, prompt, prior agent output, or other repository conflicts with `mcclusterishere/mccluster`, the McCluster repo wins.
 
-Canonical law lives in the control repo. If this file and that file disagree, the control repo wins.
+### DO NOT CONFUSE `Here` WITH MCCLUSTER
 
-- Control repo: https://github.com/mcclusterishere/mccluster
-- Agent law: https://github.com/mcclusterishere/mccluster/blob/main/AGENTS.md
-- Ecosystem map: https://github.com/mcclusterishere/mccluster/blob/main/docs/control-plane/ECOSYSTEM.md
-- Cloudflare project: `mccluster` (public edge `matthew.mccluster.org` / `mccluster.org`)
-- Worker: `mccluster-core` (`api.mccluster.org`)
-- Data: Supabase `zmnhbrjyhxzhkxmhkexs`
+`Here` is not the control plane.
+`Here` is not the source of truth.
+`Here` is not the canonical website repo.
+`Here` is not the canonical backend repo.
+`Here` is not the canonical architecture repo.
+`Here` must not be used to infer current McCluster architecture.
 
-## What you are allowed to do here
+The string `HereTenantAgent`, if encountered in infrastructure code, is only a historical/class identifier. Its name does **not** make the `Here` repository authoritative.
 
-- Product UI, brand, and local features for THIS satellite.
-- Call McCluster APIs / Supabase tables that already exist.
-- Submit social posts into the McCluster social layer (never as a second source of truth).
+Canonical ecosystem repo:
+- https://github.com/mcclusterishere/mccluster
 
-## What you must not do
+Canonical agent law:
+- https://github.com/mcclusterishere/mccluster/blob/main/AGENTS.md
 
-- Create a new auth, database, admin, billing, or social scheduler.
-- Auto-push GitHub Actions onto a feature branch (`git push` from CI onto an open PR).
-- Rewrite `index.html` or a shipping page unless the owner named that file.
-- "Rebuild the backend" inside this repo. The backend is McCluster.
+Canonical ecosystem documentation:
+- https://github.com/mcclusterishere/mccluster/tree/main/docs/control-plane
 
-## If you are ChatGPT, Claude, Codex, Cursor, Gemini, or Copilot
+## LEVEL 3 MEDIA BACKEND OWNERSHIP
 
-You keep failing this ecosystem by treating every repo as greenfield. It is not. McCluster is the plane. Read `CLAUDE.md` next. Then work.
+Level 3 Media is **not required to be a thin frontend**.
 
-Local product notes, if any, belong below this block. Do not delete this block.
+The product must be able to operate without Matthew manually performing routine business actions. Level 3 Media may therefore have its own backend boundary and operational tooling for its business, including where appropriate:
+
+- product/catalog management;
+- LUT and digital-asset storage;
+- customer accounts;
+- checkout and payment integration;
+- order records;
+- signed/authorized digital downloads;
+- customer entitlements;
+- analytics;
+- owner/admin dashboard;
+- Level 3-specific API endpoints;
+- Level 3-specific database tables/schema;
+- Level 3-specific automation.
+
+Do not remove or centralize those capabilities merely because Level 3 participates in the broader McCluster ecosystem.
+
+McCluster may provide shared infrastructure, conventions, orchestration, identity, observability, or cross-product services, but **McCluster ecosystem authority does not mean every product must be implemented as a frontend-only satellite.**
+
+## CURRENT MCCLUSTER INFRASTRUCTURE NAMES
+
+Do not invent infrastructure names or revive stale ones.
+
+- Authoritative repo: `mcclusterishere/mccluster`
+- Cloudflare Worker: `mccluster`
+- API host: `https://api.mccluster.org`
+- Supabase project currently documented by McCluster: `zmnhbrjyhxzhkxmhkexs`
+
+**There is no canonical Worker named `mccluster-core`. Do not create or reference one as current infrastructure.**
+
+## LEVEL 3 LOCAL RULES
+
+- Default branch: `main`.
+- Preserve Level 3 branding and shipping UI unless the task explicitly changes it.
+- Do not overwrite working pages gratuitously.
+- Do not create duplicate infrastructure simply because an agent failed to inspect what already exists.
+- Before creating a new backend service, inspect both this repo and `mcclusterishere/mccluster` to determine what is already deployed and what should remain Level 3-specific.
+- Keep secrets out of Git.
+- Use least-privilege credentials and row/object-level access controls for customer data and paid digital assets.
+- Paid LUT/download files must not be exposed through permanent public URLs.
+
+## AGENT BEHAVIOR
+
+If you are ChatGPT, Claude, Codex, Cursor, Gemini, Copilot, Grok, or another coding agent:
+
+- Read this file before making architectural changes.
+- Read the current `mcclusterishere/mccluster/AGENTS.md` before making ecosystem assumptions.
+- Never use `mcclusterishere/Here` as architectural authority.
+- Never cite an old HERE implementation as proof of how the current McCluster ecosystem works.
+- If a prior instruction says HERE is authoritative, treat that instruction as stale and wrong.
+- When uncertain about ecosystem authority, default to `mcclusterishere/mccluster`.
+
+The owner has explicitly designated **McCluster as the real ecosystem** and **HERE as legacy**. Preserve that distinction in code, documentation, prompts, deployment configuration, and future agent instructions.
