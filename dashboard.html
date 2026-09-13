@@ -1,348 +1,165 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#080808" />
-  <title>Studio · LEVEL 3 MEDIA</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet" />
-  <style>
-    :root { color-scheme: dark; --ink:#080808; --panel:#101010; --line:#ffffff1a; --mute:#8b8b8b; --paper:#f4f1ea; }
-    * { box-sizing: border-box; }
-    body { margin:0; min-height:100dvh; background:var(--ink); color:var(--paper); font-family:Inter,system-ui,sans-serif; }
-    a { color:inherit; text-decoration:none; }
-    header {
-      display:flex; align-items:center; justify-content:space-between;
-      height:56px; padding:0 16px; border-bottom:1px solid var(--line);
-      background:rgba(8,8,8,.92); position:sticky; top:0; z-index:10;
-    }
-    .brand { letter-spacing:.14em; font-size:11px; font-weight:600; text-transform:uppercase; }
-    main { width:min(720px,100%); margin:0 auto; padding:24px 16px 80px; }
-    h1 { font-family:"Instrument Serif",Georgia,serif; font-weight:400; font-size:clamp(32px,8vw,48px); margin:0 0 8px; letter-spacing:-.02em; }
-    .sub { color:var(--mute); font-size:13px; line-height:1.5; margin:0 0 24px; }
-    .card { border:1px solid var(--line); background:var(--panel); border-radius:18px; padding:18px; margin-bottom:14px; }
-    .card h2 { margin:0 0 10px; font-size:14px; letter-spacing:.04em; text-transform:uppercase; color:#bbb; font-weight:600; }
-    label { display:block; font-size:11px; color:#999; margin:0 0 6px; }
-    input, textarea {
-      width:100%; background:#0c0c0c; border:1px solid var(--line); color:var(--paper);
-      border-radius:12px; padding:12px 14px; font:inherit; margin-bottom:12px;
-    }
-    button, .btn {
-      display:inline-flex; align-items:center; justify-content:center; gap:8px;
-      min-height:44px; padding:0 16px; border-radius:12px; border:1px solid #fff;
-      background:#fff; color:#0a0a0a; font:inherit; font-weight:600; font-size:13px; cursor:pointer;
-    }
-    button.ghost, .btn.ghost { background:transparent; color:#fff; border-color:var(--line); }
-    button:disabled { opacity:.4; cursor:not-allowed; }
-    .stack { display:flex; flex-wrap:wrap; gap:8px; }
-    .muted { color:var(--mute); font-size:12px; line-height:1.45; }
-    .pill {
-      display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border-radius:999px;
-      border:1px solid var(--line); font-size:11px; color:#ccc;
-    }
-    .pill.on { border-color:#fff; color:#fff; }
-    .track {
-      display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center;
-      padding:12px 0; border-bottom:1px solid var(--line);
-    }
-    .track:last-child { border-bottom:0; }
-    .track strong { display:block; font-size:14px; }
-    .track small { color:var(--mute); }
-    .err { color:#ff8a8a; font-size:12px; margin:0 0 10px; }
-    .ok { color:#b8f0c2; font-size:12px; margin:0 0 10px; }
-    .hidden { display:none !important; }
-    .powered { margin-top:28px; font-size:12px; color:#777; }
-    .powered a { color:#ccc; border-bottom:1px solid #333; }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#090909" />
+  <title>Level 3 Media · Owner Console</title>
+  <link rel="stylesheet" href="./l3-admin.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./l3-admin.js" defer></script>
 </head>
 <body>
-  <header>
-    <a class="brand" href="./">Level 3 Media · Studio</a>
-    <a class="ghost btn" href="https://matthew.mccluster.org/" rel="noopener" style="min-height:36px;font-size:11px">McCluster</a>
-  </header>
-  <main>
-    <h1>Studio desk</h1>
-    <p class="sub">One account on the McCluster platform. Music library and provider profile share the same backend as matthew.mccluster.org.</p>
+  <div id="msg" class="notice hidden" style="position:fixed;right:16px;bottom:16px;z-index:99;max-width:430px"></div>
 
-    <section class="card" id="authCard">
-      <h2>Account</h2>
-      <p class="muted" id="authStatus">Sign in with your McCluster account (or create one). Same auth as the main site.</p>
-      <p class="err hidden" id="authErr"></p>
-      <p class="ok hidden" id="authOk"></p>
-      <div id="authForm">
-        <label>Email</label>
-        <input id="email" type="email" autocomplete="email" placeholder="you@studio.com" />
-        <label>Password</label>
-        <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" />
-        <div class="stack">
-          <button type="button" id="btnSignIn">Sign in</button>
-          <button type="button" class="ghost" id="btnSignUp">Create account</button>
-        </div>
-      </div>
-      <div id="authOut" class="hidden">
-        <p class="muted" id="who"></p>
-        <div class="stack">
-          <button type="button" class="ghost" id="btnSignOut">Sign out</button>
-          <span class="pill" id="providerPill">Provider not claimed</span>
-        </div>
-      </div>
+  <main id="auth" class="login hidden">
+    <section id="loginBox" class="card">
+      <div class="brand">LEVEL 3 MEDIA</div>
+      <p class="muted">Owner Console · powered by the McCluster ecosystem</p>
+      <h1>Sign in</h1>
+      <p class="muted">Use your Cluster ID and password. Your email is not your dashboard username.</p>
+      <form id="loginForm" class="stack">
+        <input id="clusterLogin" autocomplete="username" placeholder="Cluster ID" required />
+        <input id="passwordLogin" type="password" autocomplete="current-password" placeholder="Password" required />
+        <button type="submit">Sign in</button>
+      </form>
     </section>
 
-    <section class="card hidden" id="providerCard">
-      <h2>Provider profile</h2>
-      <p class="muted">Claim the Level 3 slot on the McCluster <code>providers</code> table (schema already supports Stripe Connect fields server-side).</p>
-      <label>Display name</label>
-      <input id="provName" value="Level 3 Media" />
-      <label>Craft</label>
-      <input id="provCraft" value="music video · photography · production" />
-      <div class="stack">
-        <button type="button" id="btnClaim">Claim / update provider</button>
-      </div>
-      <p class="muted" style="margin-top:12px">Public checkout on matthew.mccluster.org is currently single-seller. Your provider row still holds <code>stripe_acct</code> for when Connect onboarding is re-armed. Until then bookings can settle through the house ledger.</p>
+    <section id="claimBox" class="card hidden">
+      <div class="brand">LEVEL 3 MEDIA</div>
+      <p class="muted">One-time owner activation</p>
+      <h1>Claim your console</h1>
+      <p class="muted">Choose the Cluster ID and password you will use from now on. This one-time link grants access only to Level 3 Media.</p>
+      <form id="claimForm" class="stack">
+        <input id="claimName" autocomplete="name" placeholder="Your name" required />
+        <input id="claimEmail" type="email" autocomplete="email" placeholder="Email" required />
+        <input id="claimCluster" autocomplete="username" placeholder="Choose Cluster ID (example: lvl3owner)" required />
+        <input id="claimPassword" type="password" autocomplete="new-password" minlength="10" placeholder="Choose password · 10+ characters" required />
+        <button type="submit">Create Level 3 owner account</button>
+      </form>
+      <p class="file-note">If email confirmation is required, confirm it and reopen this same activation link to finish the claim.</p>
     </section>
-
-    <section class="card hidden" id="musicCard">
-      <h2>Music engine</h2>
-      <p class="muted">Upload to the shared <code>cuts</code> bucket and <code>creator_tracks</code> table. Public tracks show on Listen here and can be read from the main site.</p>
-      <label>Title</label>
-      <input id="trTitle" placeholder="Track title" />
-      <label>Artist credit</label>
-      <input id="trArtist" placeholder="Artist name" value="Level 3 Media" />
-      <label>Audio file (mp3, wav, m4a)</label>
-      <input id="trFile" type="file" accept="audio/*,.mp3,.wav,.m4a" />
-      <div class="stack">
-        <button type="button" id="btnUpload">Upload track</button>
-      </div>
-      <p class="err hidden" id="upErr"></p>
-      <p class="ok hidden" id="upOk"></p>
-      <div id="trackList" style="margin-top:16px"></div>
-    </section>
-
-    <section class="card">
-      <h2>Shortcuts</h2>
-      <div class="stack">
-        <a class="btn ghost" href="./book.html">Chat booking</a>
-        <a class="btn ghost" href="./listen.html">Listen page</a>
-        <a class="btn ghost" href="https://matthew.mccluster.org/album.html" rel="noopener">Main engine</a>
-      </div>
-    </section>
-
-    <p class="powered">Built and powered by <a href="https://matthew.mccluster.org/" rel="noopener">McCluster</a>. Creator social (all media types) is the next layer on the main site; music is the first vertical.</p>
   </main>
 
-  <script>
-    (function () {
-      var URL_ = "https://zmnhbrjyhxzhkxmhkexs.supabase.co";
-      var KEY = "sb_publishable_kr5NujBZ1n518IUMDoa2dQ_tqQAJef4";
-      var NS = "mccdb_";
-      var PROVIDER_SLUG = "level-3-media";
+  <main id="app" class="wrap hidden">
+    <header class="top">
+      <div>
+        <div class="brand">LEVEL 3 MEDIA · OWNER CONSOLE</div>
+        <div id="who" class="muted"></div>
+      </div>
+      <div class="row">
+        <a class="ghost" style="padding:10px 12px;border:1px solid #333;border-radius:10px;text-decoration:none" href="./shop.html">View store</a>
+        <a class="ghost" style="padding:10px 12px;border:1px solid #333;border-radius:10px;text-decoration:none" href="./">Website</a>
+        <button id="logout" class="ghost">Sign out</button>
+      </div>
+    </header>
 
-      function jget(k, fb) { try { var v = JSON.parse(localStorage.getItem(NS + k)); return v == null ? fb : v; } catch (e) { return fb; } }
-      function jset(k, v) { try { localStorage.setItem(NS + k, JSON.stringify(v)); } catch (e) {} }
-      function jdel(k) { try { localStorage.removeItem(NS + k); } catch (e) {} }
-      function session() { return jget("session", null); }
-      function saveSession(s) { jset("session", s); }
-      function clearSession() { jdel("session"); }
+    <section class="grid">
+      <article class="card quarter"><div class="muted">Published products</div><div id="statProducts" class="stat">0</div></article>
+      <article class="card quarter"><div class="muted">Paid orders</div><div id="statOrders" class="stat">0</div></article>
+      <article class="card quarter"><div class="muted">Gross sales</div><div id="statGross" class="stat">$0</div></article>
+      <article class="card quarter"><div class="muted">Gross less McCluster fees</div><div id="statNet" class="stat">$0</div></article>
 
-      function authHeaders() {
-        var s = session();
-        var h = { apikey: KEY, "Content-Type": "application/json" };
-        if (s && s.access_token) h.Authorization = "Bearer " + s.access_token;
-        else h.Authorization = "Bearer " + KEY;
-        return h;
-      }
+      <article class="card half">
+        <h2>Platform rent</h2>
+        <div class="row"><span>Billing:</span><span id="billingStatus" class="pill">inactive</span><span>Plan:</span><strong id="billingPlan">none</strong></div>
+        <p id="commerceLocked" class="notice bad">Commerce is locked until the Level 3 platform subscription is paid. Existing data stays intact, but the public store and new checkout are disabled.</p>
+        <div id="plans" class="plans">
+          <div class="plan">
+            <strong>$33/mo</strong>
+            <p class="muted">Standard. Level 3 keeps product-sale revenue after Stripe processing. McCluster takes no product revenue share.</p>
+            <button id="standardPlan">Choose $33 plan</button>
+          </div>
+          <div class="plan">
+            <strong>$16.50/mo + 50%</strong>
+            <p class="muted">Lower fixed rent. McCluster receives 50% of Level 3 digital-product gross sales as a server-enforced application fee.</p>
+            <button id="sharePlan">Choose hybrid plan</button>
+          </div>
+        </div>
+        <button id="manageBilling" class="ghost hidden">Manage billing / payment method / cancel</button>
+      </article>
 
-      function api(path, opts) {
-        opts = opts || {};
-        return fetch(URL_ + path, {
-          method: opts.method || "GET",
-          headers: Object.assign(authHeaders(), opts.headers || {}),
-          body: opts.body ? JSON.stringify(opts.body) : undefined
-        }).then(function (r) {
-          return r.text().then(function (t) {
-            var data = null;
-            try { data = t ? JSON.parse(t) : null; } catch (e) { data = t; }
-            if (!r.ok) {
-              var err = new Error((data && (data.msg || data.message || data.error_description)) || r.statusText);
-              err.status = r.status; err.data = data; throw err;
-            }
-            return data;
-          });
-        });
-      }
+      <article class="card half">
+        <h2>Payout account</h2>
+        <p id="connectState" class="muted">Checking Stripe payout status…</p>
+        <p class="muted">Connect Level 3's own Stripe payout account. Customers buy from Level 3; payouts go to Level 3. McCluster only applies the fee defined by the chosen plan.</p>
+        <button id="connectStripe">Set up / finish Stripe payouts</button>
+      </article>
 
-      function show(el, on) { el.classList.toggle("hidden", !on); }
+      <article class="card">
+        <h2>Add digital product</h2>
+        <p class="muted">Upload LUT packs, presets, ZIPs, PDFs, project files, or other Level 3 digital goods. Paid source files live in private storage and customers receive expiring signed download links only after verified payment.</p>
+        <form id="productForm" class="grid">
+          <div class="half stack">
+            <input id="prodTitle" placeholder="Product title" required />
+            <input id="prodSlug" placeholder="URL slug (optional; generated from title)" />
+            <input id="prodPrice" type="number" min="0.50" step="0.01" placeholder="Price in dollars" required />
+            <input id="prodVersion" value="1.0" placeholder="Version" />
+            <input id="assetFile" type="file" required />
+            <div class="file-note">Private product file · up to 512 MB per file.</div>
+            <input id="coverFile" type="file" accept="image/*" />
+            <div class="file-note">Optional public cover image.</div>
+          </div>
+          <div class="half stack">
+            <input id="prodShort" placeholder="Short storefront description" />
+            <textarea id="prodDesc" placeholder="Full product description"></textarea>
+            <label class="row"><input id="prodPublish" type="checkbox" style="width:auto" /> Publish immediately after upload</label>
+            <button type="submit">Upload & save product</button>
+            <div class="progress"><i id="uploadBar"></i></div>
+          </div>
+        </form>
+      </article>
 
-      function refreshUI() {
-        var s = session();
-        show(document.getElementById("authForm"), !s);
-        show(document.getElementById("authOut"), !!s);
-        show(document.getElementById("providerCard"), !!s);
-        show(document.getElementById("musicCard"), !!s);
-        document.getElementById("authErr").classList.add("hidden");
-        document.getElementById("authOk").classList.add("hidden");
-        if (s) {
-          document.getElementById("who").textContent = (s.user && (s.user.email || s.user.id)) || "Signed in";
-          loadProvider();
-          loadTracks();
-        }
-      }
+      <article class="card">
+        <h2>Products</h2>
+        <div class="scroll">
+          <table class="table">
+            <thead><tr><th>Product</th><th>Price</th><th>Status</th><th>File</th><th>Actions</th></tr></thead>
+            <tbody id="productsBody"><tr><td colspan="5">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </article>
 
-      function signIn() {
-        var email = document.getElementById("email").value.trim();
-        var password = document.getElementById("password").value;
-        api("/auth/v1/token?grant_type=password", { method: "POST", body: { email: email, password: password } })
-          .then(function (data) { saveSession(data); refreshUI(); })
-          .catch(function (e) {
-            var box = document.getElementById("authErr");
-            box.textContent = e.message || "Sign in failed";
-            box.classList.remove("hidden");
-          });
-      }
+      <article class="card">
+        <h2>Orders & customers</h2>
+        <p class="muted">The latest 100 orders. Full refunds revoke the customer's download entitlement automatically.</p>
+        <div class="scroll">
+          <table class="table">
+            <thead><tr><th>Date</th><th>Product</th><th>Customer</th><th>Gross</th><th>McCluster</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="ordersBody"><tr><td colspan="7">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </article>
 
-      function signUp() {
-        var email = document.getElementById("email").value.trim();
-        var password = document.getElementById("password").value;
-        api("/auth/v1/signup", { method: "POST", body: { email: email, password: password } })
-          .then(function (data) {
-            if (data.access_token) saveSession(data);
-            else if (data.user && !data.access_token) {
-              var ok = document.getElementById("authOk");
-              ok.textContent = "Account created. Confirm email if required, then sign in.";
-              ok.classList.remove("hidden");
-              return;
-            } else if (data.session) saveSession(data.session);
-            refreshUI();
-          })
-          .catch(function (e) {
-            var box = document.getElementById("authErr");
-            box.textContent = e.message || "Sign up failed";
-            box.classList.remove("hidden");
-          });
-      }
+      <article class="card half">
+        <h2>Storefront settings</h2>
+        <form id="storeForm" class="stack">
+          <input id="storeName" placeholder="Store name" />
+          <textarea id="storeDesc" placeholder="Store description"></textarea>
+          <input id="supportEmail" type="email" placeholder="Customer support email" />
+          <input id="termsUrl" type="url" placeholder="Terms URL (optional)" />
+          <textarea id="refundPolicy" placeholder="Refund policy"></textarea>
+          <label class="row"><input id="storeEnabled" type="checkbox" style="width:auto" /> Public storefront enabled</label>
+          <button type="submit">Save store settings</button>
+        </form>
+      </article>
 
-      function signOut() {
-        var s = session();
-        if (s && s.access_token) {
-          fetch(URL_ + "/auth/v1/logout", { method: "POST", headers: { apikey: KEY, Authorization: "Bearer " + s.access_token } }).catch(function () {});
-        }
-        clearSession();
-        refreshUI();
-      }
-
-      function loadProvider() {
-        api("/rest/v1/providers?slug=eq." + encodeURIComponent(PROVIDER_SLUG) + "&select=*")
-          .then(function (rows) {
-            var p = Array.isArray(rows) ? rows[0] : null;
-            var pill = document.getElementById("providerPill");
-            if (p) {
-              pill.textContent = "Provider · " + p.slug + (p.charges_enabled ? " · payouts on" : " · payouts pending");
-              pill.classList.add("on");
-              if (p.name) document.getElementById("provName").value = p.name;
-              if (p.craft) document.getElementById("provCraft").value = p.craft;
-            } else {
-              pill.textContent = "Provider not claimed";
-              pill.classList.remove("on");
-            }
-          }).catch(function () {});
-      }
-
-      function claimProvider() {
-        var name = document.getElementById("provName").value.trim() || "Level 3 Media";
-        var craft = document.getElementById("provCraft").value.trim() || "production";
-        api("/rest/v1/providers?on_conflict=slug", {
-          method: "POST",
-          headers: { Prefer: "resolution=merge-duplicates,return=representation" },
-          body: { slug: PROVIDER_SLUG, name: name, craft: craft, rate: 0 }
-        }).then(function () { loadProvider(); })
-          .catch(function (e) { alert(e.message || "Could not claim provider."); });
-      }
-
-      function escapeHtml(s) {
-        return String(s || "").replace(/[&<>"']/g, function (c) {
-          return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" })[c];
-        });
-      }
-
-      function loadTracks() {
-        var s = session();
-        var uid = s && s.user && s.user.id;
-        var q = uid
-          ? "/rest/v1/creator_tracks?uid=eq." + uid + "&select=id,title,artist,audio_url,public,created_at&order=created_at.desc"
-          : "/rest/v1/creator_tracks?select=id,title,artist,audio_url,public,created_at&order=created_at.desc&limit=20";
-        api(q).then(function (rows) {
-          var box = document.getElementById("trackList");
-          if (!rows || !rows.length) {
-            box.innerHTML = '<p class="muted">No tracks yet. Upload the first cut.</p>';
-            return;
-          }
-          box.innerHTML = rows.map(function (t) {
-            return '<div class="track"><div><strong>' + escapeHtml(t.title) + '</strong><small>' +
-              escapeHtml(t.artist || "") + (t.public ? " · public" : " · private") +
-              '</small></div><a class="btn ghost" style="min-height:36px;font-size:11px" href="' +
-              escapeHtml(t.audio_url) + '" target="_blank" rel="noopener">Open</a></div>';
-          }).join("");
-        }).catch(function (e) {
-          document.getElementById("trackList").innerHTML = '<p class="muted">' + escapeHtml(e.message) + '</p>';
-        });
-      }
-
-      function uploadTrack() {
-        var file = document.getElementById("trFile").files[0];
-        var title = document.getElementById("trTitle").value.trim();
-        var artist = document.getElementById("trArtist").value.trim() || "Level 3 Media";
-        var err = document.getElementById("upErr");
-        var ok = document.getElementById("upOk");
-        err.classList.add("hidden");
-        ok.classList.add("hidden");
-        if (!file || !title) { err.textContent = "Title and audio file are required."; err.classList.remove("hidden"); return; }
-        var s = session();
-        if (!s || !s.access_token || !s.user) { err.textContent = "Sign in first."; err.classList.remove("hidden"); return; }
-        var uid = s.user.id;
-        var safe = file.name.replace(/[^\w.\-]+/g, "_");
-        var path = uid + "/" + Date.now() + "-" + safe;
-        var btn = document.getElementById("btnUpload");
-        btn.disabled = true;
-        fetch(URL_ + "/storage/v1/object/cuts/" + path, {
-          method: "POST",
-          headers: {
-            apikey: KEY,
-            Authorization: "Bearer " + s.access_token,
-            "Content-Type": file.type || "audio/mpeg",
-            "x-upsert": "true"
-          },
-          body: file
-        }).then(function (r) {
-          return r.text().then(function (t) {
-            if (!r.ok) throw new Error(t || r.statusText);
-            return t;
-          });
-        }).then(function () {
-          var publicUrl = URL_ + "/storage/v1/object/public/cuts/" + path;
-          return api("/rest/v1/creator_tracks", {
-            method: "POST",
-            headers: { Prefer: "return=representation" },
-            body: { title: title, artist: artist, audio_url: publicUrl, public: true }
-          });
-        }).then(function () {
-          ok.textContent = "Track live on the shared engine.";
-          ok.classList.remove("hidden");
-          document.getElementById("trTitle").value = "";
-          document.getElementById("trFile").value = "";
-          loadTracks();
-        }).catch(function (e) {
-          err.textContent = e.message || "Upload failed";
-          err.classList.remove("hidden");
-        }).finally(function () { btn.disabled = false; });
-      }
-
-      document.getElementById("btnSignIn").onclick = signIn;
-      document.getElementById("btnSignUp").onclick = signUp;
-      document.getElementById("btnSignOut").onclick = signOut;
-      document.getElementById("btnClaim").onclick = claimProvider;
-      document.getElementById("btnUpload").onclick = uploadTrack;
-      refreshUI();
-    })();
-  </script>
+      <article class="card half">
+        <h2>Account & security</h2>
+        <form id="passwordForm" class="stack">
+          <label>Change password</label>
+          <input id="newPassword" type="password" autocomplete="new-password" minlength="10" placeholder="New password · 10+ characters" required />
+          <button type="submit">Change password</button>
+        </form>
+        <hr style="border:0;border-top:1px solid #272727;margin:22px 0" />
+        <form id="clusterForm" class="stack">
+          <label>Change Cluster ID</label>
+          <input id="clusterNew" pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,31}" placeholder="Cluster ID" required />
+          <button type="submit">Change Cluster ID</button>
+        </form>
+        <p class="file-note">Your Level 3 role cannot grant authority over the McCluster ecosystem or other clients.</p>
+      </article>
+    </section>
+  </main>
 </body>
 </html>
