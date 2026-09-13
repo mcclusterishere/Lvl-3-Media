@@ -17,7 +17,7 @@
       <div class="brand">LEVEL 3 MEDIA</div>
       <p class="muted">Owner Console · powered by the McCluster ecosystem</p>
       <h1>Sign in</h1>
-      <p class="muted">Use your McCluster ID and password. Your email is not your dashboard username.</p>
+      <p class="muted">Use your McCluster ID and password. The same McCluster identity follows you across participating McCluster and satellite properties.</p>
       <form id="loginForm" class="stack">
         <input id="mcclusterLogin" autocomplete="username" placeholder="McCluster ID" required />
         <input id="passwordLogin" type="password" autocomplete="current-password" placeholder="Password" required />
@@ -29,14 +29,15 @@
       <div class="brand">LEVEL 3 MEDIA</div>
       <p class="muted">One-time owner activation</p>
       <h1>Claim your console</h1>
-      <p class="muted">Create your account and McCluster will assign your McCluster ID automatically. This one-time link grants access only to Level 3 Media.</p>
+      <p class="muted">Create your McCluster account here and choose your own McCluster ID. This is your ecosystem identity — not a Level 3-only username.</p>
       <form id="claimForm" class="stack">
         <input id="claimName" autocomplete="name" placeholder="Your name" required />
         <input id="claimEmail" type="email" autocomplete="email" placeholder="Email" required />
+        <input id="claimMccluster" autocomplete="username" pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,31}" maxlength="32" placeholder="Choose McCluster ID" required />
         <input id="claimPassword" type="password" autocomplete="new-password" minlength="10" placeholder="Choose password · 10+ characters" required />
-        <button type="submit">Create Level 3 owner account</button>
+        <button type="submit">Create McCluster account + Level 3 access</button>
       </form>
-      <p class="file-note">If email confirmation is required, confirm it and reopen this same activation link to finish the claim.</p>
+      <p class="file-note">Your McCluster ID must be globally unique. If email confirmation is required, confirm it and reopen this same activation link to finish the claim.</p>
     </section>
   </main>
 
@@ -144,19 +145,20 @@
       </article>
 
       <article class="card half">
-        <h2>Account & security</h2>
-        <div class="stack">
+        <h2>McCluster account & security</h2>
+        <form id="mcclusterIdForm" class="stack">
           <label>McCluster ID</label>
-          <input id="mcclusterId" readonly />
-          <p class="file-note">Your McCluster ID is your ecosystem identity. It is assigned by McCluster, not created as a Level 3-only username.</p>
-        </div>
+          <input id="mcclusterId" pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,31}" maxlength="32" placeholder="McCluster ID" required />
+          <button type="submit">Update McCluster ID</button>
+          <p class="file-note">This is your global McCluster identity. Changing it changes your login handle everywhere, but does not change your immutable account, purchases, permissions, posts, or other history.</p>
+        </form>
         <hr style="border:0;border-top:1px solid #272727;margin:22px 0" />
         <form id="passwordForm" class="stack">
           <label>Change password</label>
           <input id="newPassword" type="password" autocomplete="new-password" minlength="10" placeholder="New password · 10+ characters" required />
           <button type="submit">Change password</button>
         </form>
-        <p class="file-note">Your Level 3 role cannot grant authority over the McCluster ecosystem or other clients.</p>
+        <p class="file-note">Your Level 3 role remains isolated to Level 3. Shared identity does not grant authority over McCluster or other customer ecosystems.</p>
       </article>
     </section>
   </main>
