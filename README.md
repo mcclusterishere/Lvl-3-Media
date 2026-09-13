@@ -1,72 +1,109 @@
-# LEVEL 3 MEDIA — Website
+# LEVEL 3 MEDIA
 
-Modern, mobile-first landing + booking site for **Level 3 Media LLC**.
+Level 3 Media is a McCluster satellite product. The authoritative ecosystem repository is `mcclusterishere/mccluster`; the legacy `mcclusterishere/Here` repository is not authoritative.
 
-Built for ad traffic → high-converting onboarding form that emails you the lead details (name, phone, budget, project type, dates, notes).
+## Public surfaces
 
-## Live Preview
+- Website: `https://mcclusterishere.github.io/Lvl-3-Media/`
+- Digital store: `https://mcclusterishere.github.io/Lvl-3-Media/shop.html`
+- Owner Console: `https://mcclusterishere.github.io/Lvl-3-Media/dashboard.html`
+- Secure post-purchase delivery: `download.html?session_id=...`
 
-After you enable GitHub Pages (or deploy the files to your hosting):
+## Owner Console
 
-- **GitHub Pages**: `https://mcclusterishere.github.io/Lvl-3-Media/`
-- Or just open `index.html` in a browser for local preview.
+The Level 3 owner can operate the business without McCluster administrator intervention after the one-time owner claim:
 
-## Quick Setup (5 minutes)
+- sign in with a unique **Cluster ID** + password;
+- change the Cluster ID;
+- change the password;
+- connect/finish the Level 3 Stripe payout account;
+- choose and self-manage the Level 3 platform subscription;
+- upload private digital products such as LUT packs and ZIP files;
+- upload public product cover art;
+- set title, slug, descriptions, version, price, and publish state;
+- publish/unpublish/archive products;
+- change prices;
+- inspect orders, customers, gross revenue, and platform fees;
+- issue refunds; full refunds revoke digital-download entitlements;
+- manage store name, description, support email, terms, refund policy, and storefront availability.
 
-### 1. Connect the booking form (so you get emails)
+Level 3's role is isolated to the Level 3 organization/app. It grants no authority over McCluster or any other satellite.
 
-1. Go to [https://web3forms.com](https://web3forms.com) → “Create Access Key” (free, no credit card)
-2. Use the email address where you want booking inquiries to land
-3. Copy the Access Key
-4. Open `index.html`
-5. Find this line and replace the placeholder:
+## Billing gate
 
-```html
-<input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY" />
-```
+Commerce is server-gated by the Level 3 platform subscription. The UI is not the security boundary.
 
-6. Save & push. Done. Every form submit emails you instantly.
+Current plans:
 
-(Alternative: Formspree, Netlify Forms, etc. — same idea.)
+| Plan | Monthly rent | McCluster share of Level 3 digital-product gross sales |
+| --- | ---: | ---: |
+| Standard | $33.00 | 0% |
+| Hybrid | $16.50 | 50% |
 
-### 2. Deploy
+If billing becomes inactive/canceled/unpaid, the public product query and checkout stop serving purchases. Existing business data remains stored.
 
-**Option A — GitHub Pages (easiest free preview)**
-1. Repo Settings → Pages
-2. Source: Deploy from a branch → `main` → `/ (root)`
-3. Save. Site goes live at `https://mcclusterishere.github.io/Lvl-3-Media/`
+The Hybrid revenue split is calculated server-side and passed to Stripe as an application fee. A browser cannot choose or override the fee.
 
-**Option B — Their existing hosting**
-Just upload `index.html` (and this README if you want) to the root of the domain / whatever folder their host uses. It’s a single static file — zero build step.
+## Payments and payouts
 
-**Option C — Netlify / Vercel / Cloudflare Pages**
-Drag & drop the folder or connect the repo. Instant HTTPS + custom domain.
+Level 3 uses its own Stripe connected account for product sales. The customer is buying Level 3's product; product checkout runs as a direct charge against the connected account. McCluster supplies the software/platform and, for the Hybrid plan, collects the configured application fee.
 
-## What’s included
+Platform rent is billed separately through McCluster's Stripe account with Stripe Billing. The owner can manage payment methods/cancellation through Stripe's Customer Portal.
 
-- Dark cinematic design matching the IG aesthetic
-- Mobile-first (large touch targets, sticky “Book a Shoot” bar on mobile)
-- Hero → Work grid → Services → **Booking form** → About → Footer
-- Form fields optimized for music video / photo / production leads:
-  - Name, Phone, Email
-  - Project Type + Budget Range
-  - Preferred date / timeline
-  - Free-text project details
-  - “How did you find us?” (so you can track ad performance)
-- Smooth scroll, subtle animations, sticky header
-- Direct links to Instagram + YouTube
-- Logo mark matching the current circular 3-bar icon
+## Digital fulfillment
 
-## Customization notes
+Paid source files are stored in private Supabase Storage bucket `l3-product-files`. They are never published as permanent public URLs.
 
-- Colors, copy, and portfolio cards are easy to edit in the single `index.html`
-- Portfolio cards currently link to Instagram — swap in real video embeds or project pages later if wanted
-- Stats (200+ videos, 15+ years, 4.7k followers) pulled from public bio / IG — update anytime
+After Stripe confirms a paid Checkout Session:
 
-## Repo
+1. the order is marked paid;
+2. an entitlement is created;
+3. `l3-download` verifies the paid session against the Level 3 connected account;
+4. the function returns a short-lived signed storage URL (5 minutes);
+5. download counts and security telemetry are recorded;
+6. full refunds and disputes revoke the entitlement.
 
-`mcclusterishere/Lvl-3-Media` (private)
+Public cover images use the separate `l3-public` bucket.
 
----
+## McCluster / Supabase integration
 
-Built clean so ads can land on `/#book` or just the homepage and convert.
+Canonical Supabase project: `zmnhbrjyhxzhkxmhkexs`.
+
+Level 3-specific database objects include:
+
+- `l3_store_settings`
+- `l3_products`
+- `l3_orders`
+- `l3_entitlements`
+- `l3_download_events`
+- `l3_owner_invites`
+- `l3_activity`
+- `l3_auth_attempts`
+
+Level 3 also participates in canonical McCluster objects such as `platform_profiles`, `platform_apps`, `platform_user_apps`, `orgs`, `org_members`, `org_stripe_accounts`, `platform_fee_policies`, and `stripe_events`.
+
+Edge functions:
+
+- `l3-login` — Cluster ID authentication bridge with rate limiting
+- `l3-subscribe` — paid platform-plan Checkout
+- `l3-portal` — Stripe Billing Portal
+- `l3-connect-onboard` — Level 3 Stripe payout onboarding
+- `l3-checkout` — server-priced product Checkout and plan fee enforcement
+- `l3-download` — payment verification + signed fulfillment
+- `l3-refund` — owner-authorized refunds and entitlement revocation
+- canonical `stripe-webhook` — subscription, payment, payout-account, refund, dispute and entitlement lifecycle
+
+## Security boundaries
+
+- Paid source files are private.
+- Row Level Security scopes owner/staff reads and writes to Level 3.
+- Public products are readable only when published **and** the paid storefront is active.
+- Owner billing fields are not writable from the browser.
+- Connected Stripe account IDs and fee policy are resolved server-side.
+- Stripe/Supabase service-role secrets exist only in server-side Edge Functions.
+- Cluster ID login is rate-limited and never reveals the owner's underlying email address.
+- Full refund/dispute events revoke delivery entitlement.
+
+## Agent law
+
+Read `AGENTS.md` before architectural work. `mcclusterishere/mccluster` is the ecosystem authority. `mcclusterishere/Here` is legacy and must never be treated as the source of truth.
