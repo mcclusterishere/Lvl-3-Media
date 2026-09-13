@@ -13,8 +13,8 @@ Level 3 Media is a McCluster satellite product. The authoritative ecosystem repo
 
 The Level 3 owner can operate the business without McCluster administrator intervention after the one-time owner claim:
 
-- sign in with a unique **Cluster ID** + password;
-- change the Cluster ID;
+- sign in with a unique **McCluster ID** + password;
+- receive the McCluster ID automatically from the canonical McCluster identity system during account creation;
 - change the password;
 - connect/finish the Level 3 Stripe payout account;
 - choose and self-manage the Level 3 platform subscription;
@@ -26,6 +26,8 @@ The Level 3 owner can operate the business without McCluster administrator inter
 - inspect orders, customers, gross revenue, and platform fees;
 - issue refunds; full refunds revoke digital-download entitlements;
 - manage store name, description, support email, terms, refund policy, and storefront availability.
+
+A **McCluster ID is an ecosystem identity, not a Level 3-specific username**. The current generator uses a random word plus four digits and guarantees uniqueness case-insensitively. Level 3 consumes that identity; it does not create a competing identity namespace.
 
 Level 3's role is isolated to the Level 3 organization/app. It grants no authority over McCluster or any other satellite.
 
@@ -82,9 +84,11 @@ Level 3-specific database objects include:
 
 Level 3 also participates in canonical McCluster objects such as `platform_profiles`, `platform_apps`, `platform_user_apps`, `orgs`, `org_members`, `org_stripe_accounts`, `platform_fee_policies`, and `stripe_events`.
 
+`platform_profiles.mccluster_id` is the canonical human-facing McCluster identifier. The previous `cluster_id` name is retired.
+
 Edge functions:
 
-- `l3-login` — Cluster ID authentication bridge with rate limiting
+- `l3-login` — McCluster ID authentication bridge with rate limiting
 - `l3-subscribe` — paid platform-plan Checkout
 - `l3-portal` — Stripe Billing Portal
 - `l3-connect-onboard` — Level 3 Stripe payout onboarding
@@ -101,7 +105,7 @@ Edge functions:
 - Owner billing fields are not writable from the browser.
 - Connected Stripe account IDs and fee policy are resolved server-side.
 - Stripe/Supabase service-role secrets exist only in server-side Edge Functions.
-- Cluster ID login is rate-limited and never reveals the owner's underlying email address.
+- McCluster ID login is rate-limited and never reveals the owner's underlying email address.
 - Full refund/dispute events revoke delivery entitlement.
 
 ## Agent law
